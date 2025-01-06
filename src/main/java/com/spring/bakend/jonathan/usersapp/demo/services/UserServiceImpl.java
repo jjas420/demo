@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
+
     public List<User> findAll() {
 
         return (List) this.repository.findAll();
@@ -45,6 +48,14 @@ public class UserServiceImpl implements UserService {
     public void  deleteById(@NonNull Long id) {
 
         repository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+
+    public Page<User> findAll(Pageable Peageable) {  
+        return  this.repository.findAll(Peageable);
+
     }
 
 
