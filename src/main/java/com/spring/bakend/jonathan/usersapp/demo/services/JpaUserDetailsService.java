@@ -1,6 +1,5 @@
 package com.spring.bakend.jonathan.usersapp.demo.services;
 
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,14 +17,15 @@ import com.spring.bakend.jonathan.usersapp.demo.entities.User;
 import com.spring.bakend.jonathan.usersapp.demo.repositories.UserRepository;
 
 
+
 @Service
-public class JpaUserDetailsService  implements UserDetailsService {
+public class JpaUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository repository;
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Optional<User> optionalUser = repository.findByUsername(username);
@@ -50,6 +50,5 @@ public class JpaUserDetailsService  implements UserDetailsService {
                 authorities);
 
     }
-
 
 }

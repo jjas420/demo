@@ -13,14 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.spring.bakend.jonathan.usersapp.demo.entities.User;
-import com.spring.bakend.jonathan.usersapp.demo.services.UserService;
-
-import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +20,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.spring.bakend.jonathan.usersapp.demo.entities.User;
+import com.spring.bakend.jonathan.usersapp.demo.services.UserService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins={"http://localhost:4200"})
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -44,89 +41,69 @@ public class UserController {
     public List<User> list() {
         return service.findAll();
     }
-   
 
-    @GetMapping("/{id}")
-    public ResponseEntity <?> showById(@PathVariable Long id) {
-        Optional<User> userOptional=service.findById(id);
-        if(userOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.OK).body(userOptional.orElseThrow());
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).
-        body(Collections.singletonMap("error", "el usuario con el id "+ id + "no fue encontrado"));
-
-    }
-
-    @GetMapping ("/page/{page}")
-    public Page<User> ListPageable( @PathVariable Integer page) {
-        Pageable pageable= PageRequest.of(page, 2);
+    @GetMapping("/page/{page}")
+    public Page<User> listPageable(@PathVariable Integer page) {
+        Pageable pageable = PageRequest.of(page, 4);
         return service.findAll(pageable);
     }
-    
 
-    @PostMapping 
-    public ResponseEntity <?> create(@Valid @RequestBody User user, BindingResult result)   {
-        
-            if(result.hasErrors()){
-               return validation(result);
-            }
-            
-
-        
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
-
-
-
+    @GetMapping("/{id}")
+    public ResponseEntity<?> show(@PathVariable Long id) {
+        Optional<User> userOptional = service.findById(id);
+        if (userOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(userOptional.orElseThrow());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap("error", "el usuario no se encontro por el id:" + id));
     }
-     
+    
+    @PostMapping
+    public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
+        if (result.hasErrors()) {
+            return validation(result);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
+    }
+
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody User user,BindingResult result) {
-        if(result.hasErrors()){
+    public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id) {
+
+        if (result.hasErrors()) {
             return validation(result);
-
         }
-        Optional<User> userOptional= service.findById(id);
+        
+        Optional<User> userOptional = service.findById(id);
 
-        if (userOptional.isPresent()){
-            User userdb= userOptional.get();
-            userdb.setEmail(user.getEmail());
-            userdb.setName(user.getName());
-            userdb.setUsername(user.getUsername());
-            userdb.setPassword(user.getPassword());
-            return ResponseEntity.ok( service.save(userdb));
-
+        if (userOptional.isPresent()) {
+            User userDb = userOptional.get();
+            userDb.setEmail(user.getEmail());
+            userDb.setLastname(user.getLastname());
+            userDb.setName(user.getName());
+            userDb.setPassword(user.getPassword());
+            userDb.setUsername(user.getUsername());
+            return ResponseEntity.ok(service.save(userDb));
         }
         return ResponseEntity.notFound().build();
-
-
-
-        
     }
 
-    @DeleteMapping ("/{id}")
-    public ResponseEntity<?> delete (@PathVariable Long id){
-        Optional<User> userOptional= service.findById(id);
-        if(userOptional.isPresent()){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        Optional<User> userOptional = service.findById(id);
+        if (userOptional.isPresent()) {
             service.deleteById(id);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
     
-    
-    private  ResponseEntity<?> validation (BindingResult result) {
-        
+    private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
-        for (FieldError error : result.getFieldErrors()) {
+        result.getFieldErrors().forEach(error -> {
             errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
-        }
+        });
         return ResponseEntity.badRequest().body(errors);
-  // Puede ser modificado dependiendo del uso
-}
-
-
-
+    }
 }

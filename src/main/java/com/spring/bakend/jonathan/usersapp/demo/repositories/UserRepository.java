@@ -8,12 +8,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.spring.bakend.jonathan.usersapp.demo.entities.User;
 
-public interface UserRepository extends CrudRepository <User, Long> {
-    
+public interface UserRepository extends CrudRepository<User, Long>{
 
-    Page<User> findAll(Pageable Peageable);
+    Page<User> findAll(Pageable pageable);
+
     Optional<User> findByUsername(String name);
-    
-
-
 }

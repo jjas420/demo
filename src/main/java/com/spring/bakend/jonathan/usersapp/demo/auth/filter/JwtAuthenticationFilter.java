@@ -24,9 +24,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import static com.spring.bakend.jonathan.usersapp.demo.auth.TokenJwtConfig.*;;
+import static com.spring.bakend.jonathan.usersapp.demo.auth.TokenJwtConfig.*;
+
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
     private AuthenticationManager authenticationManager;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -95,7 +97,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) throws IOException, ServletException {
-    }
 
+                Map<String,String> body= new HashMap<>();
+                body.put("messages", "Error en autentificacion con username y password incorrecto");
+                body.put("error", failed.getMessage());
+
+                response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+                response.setContentType(CONTENT_TYPE);
+                response.setStatus(401);
+
+    }
 
 }

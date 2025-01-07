@@ -13,10 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.spring.bakend.jonathan.usersapp.demo.auth.filter.JwtAuthenticationFilter;
+import com.spring.bakend.jonathan.usersapp.demo.auth.filter.JwtValidationFilter;
+
+
+
 
 @Configuration
 public class SpringSecurityConfig {
-
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
 
@@ -38,14 +41,12 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/users/{id}").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN  ")
                 .anyRequest().authenticated())
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtValidationFilter(authenticationManager()))
                 .csrf(config -> config.disable())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
-
-
-
 }

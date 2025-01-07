@@ -5,18 +5,20 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 
 import com.spring.bakend.jonathan.usersapp.demo.entities.User;
 
+
 public interface UserService {
-    
-    Page<User> findAll(Pageable Peageable);
 
     List<User> findAll();
-    Optional <User>  findById(Long id);
-    User save (User user);
-    void deleteById (Long id);
 
-    
+    Page<User> findAll(Pageable pageable);
 
+    Optional<User> findById(@NonNull Long id);
+
+    User save(User user);
+
+    void deleteById(Long id);
 }
