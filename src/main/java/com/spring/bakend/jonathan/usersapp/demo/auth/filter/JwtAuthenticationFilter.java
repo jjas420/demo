@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,12 +68,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .getPrincipal();
         String username = user.getUsername();
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
+        boolean isAdmin=roles.stream().anyMatch(role-> role.getAuthority().equals("ROLE_ADMIN"));
 
         Claims claims = Jwts
                 .claims()
                 .add("authorities", new ObjectMapper().writeValueAsString(roles))
                 .add("username", username)
+                .add("isAdmin",isAdmin)
                 .build();
+
+
 
         String jwt = Jwts.builder()
                 .subject(username)
@@ -88,6 +93,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         body.put("token", jwt);
         body.put("username", username);
         body.put("message", String.format("Hola %s has iniciado sesion con exito", username));
+        body.put("isAdmin",String.valueOf(isAdmin));
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setContentType(CONTENT_TYPE);

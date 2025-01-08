@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.spring.bakend.jonathan.usersapp.demo.models.IUser;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -23,11 +26,11 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements IUser {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private int id;
+    private Long id;
 
     @NotBlank
     private String name;
@@ -46,6 +49,19 @@ public class User {
     @NotBlank
     private String password;
 
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private boolean admin;
+
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
     @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -60,10 +76,10 @@ public class User {
         this.roles = new ArrayList<>();
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
     public String getName() {

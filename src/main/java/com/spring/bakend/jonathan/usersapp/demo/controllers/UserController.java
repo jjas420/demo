@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.bakend.jonathan.usersapp.demo.entities.User;
+import com.spring.bakend.jonathan.usersapp.demo.models.UserRequest;
 import com.spring.bakend.jonathan.usersapp.demo.services.UserService;
 
 import jakarta.validation.Valid;
@@ -34,9 +36,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/api/users")
 public class UserController {
 
+
     @Autowired
     private UserService service;
-
+  
     @GetMapping
     public List<User> list() {
         return service.findAll();
@@ -69,22 +72,17 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id) {
+    public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
 
         if (result.hasErrors()) {
             return validation(result);
         }
         
-        Optional<User> userOptional = service.findById(id);
+        Optional<User> userOptional = service.update(user,id);
 
         if (userOptional.isPresent()) {
-            User userDb = userOptional.get();
-            userDb.setEmail(user.getEmail());
-            userDb.setLastname(user.getLastname());
-            userDb.setName(user.getName());
-            userDb.setPassword(user.getPassword());
-            userDb.setUsername(user.getUsername());
-            return ResponseEntity.ok(service.save(userDb));
+       
+            return ResponseEntity.ok(userOptional.orElseThrow());
         }
         return ResponseEntity.notFound().build();
     }
