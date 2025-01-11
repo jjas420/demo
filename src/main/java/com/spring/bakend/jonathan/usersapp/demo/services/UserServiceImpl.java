@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -88,7 +90,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deleteById(Long id) {
+         try {
         repository.deleteById(id);
+    } catch (EmptyResultDataAccessException e) {
+        throw new IllegalArgumentException("El registro con ID " + id + " no existe.", e);
+    } catch (DataIntegrityViolationException e) {
+        throw new IllegalStateException("No se puede eliminar el registro porque está relacionado con otros datos.", e);
+    } catch (Exception e) {
+        throw new RuntimeException("Ocurrió un error inesperado al intentar eliminar el registro con ID " + id, e);
+    }
+
     }
     private List<Role> getRoles(IUser user) {
         List <Role> roles= new ArrayList<>();

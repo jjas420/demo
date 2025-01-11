@@ -50,7 +50,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/users/{id}").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN  ")
+                .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
                 .anyRequest().authenticated())
                 .cors(cors->cors.configurationSource(ConfigurationSource()))
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
@@ -64,8 +64,10 @@ public class SpringSecurityConfig {
     CorsConfigurationSource ConfigurationSource(){
         CorsConfiguration config= new CorsConfiguration();
         config.setAllowedOriginPatterns(Arrays.asList("*"));
-        config.setAllowedOrigins(Arrays.asList("http://localhost:4200/"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
         config.setAllowedMethods(Arrays.asList("POST","GET","PUT","DELETE"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source= new UrlBasedCorsConfigurationSource();

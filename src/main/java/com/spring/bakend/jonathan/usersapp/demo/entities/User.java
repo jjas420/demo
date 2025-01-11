@@ -71,7 +71,6 @@ public class User implements IUser {
         uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "role_id"})}
     )
     private List<Role> roles;
-
     public User() {
         this.roles = new ArrayList<>();
     }
