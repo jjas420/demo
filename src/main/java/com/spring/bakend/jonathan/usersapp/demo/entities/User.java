@@ -50,7 +50,7 @@ public class User implements IUser {
     private String password;
 
     @Transient
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean admin;
 
 
