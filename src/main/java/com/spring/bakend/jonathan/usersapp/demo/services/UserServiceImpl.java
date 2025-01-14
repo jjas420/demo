@@ -73,6 +73,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User save(User user) {
+        if (repository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("El email ya está en uso.");
+        }
+        if (repository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
+        }
      
         
         user.setRoles(getRoles(user));

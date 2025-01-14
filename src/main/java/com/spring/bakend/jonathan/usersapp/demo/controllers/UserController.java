@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,6 +58,7 @@ public class UserController {
         if (userOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(userOptional.orElseThrow());
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap("error", "el usuario no se encontro por el id:" + id));
     }
@@ -66,7 +68,21 @@ public class UserController {
         if (result.hasErrors()) {
             return validation(result);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
+        
+        } catch (IllegalArgumentException e) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", "BAD_REQUEST");
+            errors.put("message", e.getMessage());  // El mensaje del error de unicidad
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        } catch (Exception e) {
+            // Manejo de otros errores
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el usuario");
+        }
+
+        
     }
 
 
@@ -100,6 +116,8 @@ public class UserController {
     private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> {
+            if (result.hasErrors()) 
+
             errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
         });
         return ResponseEntity.badRequest().body(errors);

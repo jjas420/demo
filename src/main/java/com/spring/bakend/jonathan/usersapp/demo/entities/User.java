@@ -1,5 +1,6 @@
 package com.spring.bakend.jonathan.usersapp.demo.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -44,6 +45,7 @@ public class User implements IUser {
 
     @NotBlank
     @Size(min=4, max = 12)
+    @Column(unique = true)
     private String username;
 
     @NotBlank
