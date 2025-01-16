@@ -55,7 +55,6 @@ public class ProveedorServiceImpl implements ProveedorService {
         if (provedorOptional.isPresent()) {
             Proveedor proveedorbd = provedorOptional.get();
             proveedorbd.setNombre(proveedor.getNombre());
-            proveedorbd.setProductos(proveedor.getProductos());
             proveedorbd.setTelefono(proveedor.getTelefono());
 
             return Optional.of(repository.save(proveedorbd));

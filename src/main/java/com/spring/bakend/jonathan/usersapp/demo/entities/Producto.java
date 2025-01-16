@@ -1,9 +1,12 @@
 package com.spring.bakend.jonathan.usersapp.demo.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,8 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Producto {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +26,16 @@ public class Producto {
 
     @Column(nullable = false)
     private double precio;
-    @Column(nullable = false, unique=true)
+    @Column(nullable = false, unique = true)
     private String codigo_producto;
     @Column(nullable = false)
     private Long Stock;
-    
 
-    @JsonBackReference
-    @ManyToOne
+ 
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proveedor_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "productos"}) 
     private Proveedor proveedor;
 
     // Getters y Setters
@@ -45,6 +49,14 @@ public class Producto {
 
     public String getNombre() {
         return nombre;
+    }
+
+    public Long getStock() {
+        return Stock;
+    }
+
+    public void setStock(Long stock) {
+        Stock = stock;
     }
 
     public void setNombre(String nombre) {
@@ -75,7 +87,4 @@ public class Producto {
         this.codigo_producto = codigo_producto;
     }
 
-    
 }
-
-
