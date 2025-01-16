@@ -93,14 +93,28 @@ public class UserController {
         if (result.hasErrors()) {
             return validation(result);
         }
-        
+        try{
         Optional<User> userOptional = service.update(user,id);
-
         if (userOptional.isPresent()) {
        
             return ResponseEntity.ok(userOptional.orElseThrow());
         }
         return ResponseEntity.notFound().build();
+        
+         
+    } catch (IllegalArgumentException e) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", "BAD_REQUEST");
+        errors.put("message", e.getMessage());  // El mensaje del error de unicidad
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    } catch (Exception e) {
+        // Manejo de otros errores
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el usuario");
+    }
+
+
+       
     }
 
     @DeleteMapping("/{id}")

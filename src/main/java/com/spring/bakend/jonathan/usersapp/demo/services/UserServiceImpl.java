@@ -93,8 +93,19 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> userOptional = repository.findById(id);
 
+     
+     
+
            if (userOptional.isPresent()) {
+
             User userDb = userOptional.get();
+            if (repository.existsByEmail(user.getEmail())) {
+                throw new IllegalArgumentException("El email ya está en uso.");
+            }
+            if (repository.existsByUsername(user.getUsername())) {
+                throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
+            }
+            
             userDb.setEmail(user.getEmail());
             userDb.setLastname(user.getLastname());
             userDb.setName(user.getName());
