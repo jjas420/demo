@@ -42,6 +42,10 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Transactional
 
     public Proveedor save(Proveedor proveedor) {
+        if (repository.existsByNombre(proveedor.getNombre())) {
+            throw new IllegalArgumentException("El nombre ya está en uso.");
+        }
+      
 
         return repository.save(proveedor);
 

@@ -48,6 +48,8 @@ public class UserController {
         return service.findAll();
     }
 
+    
+
     @GetMapping("/page/{page}")
     @PreAuthorize("permitAll()")
     public Page<User> listPageable(@PathVariable Integer page) {

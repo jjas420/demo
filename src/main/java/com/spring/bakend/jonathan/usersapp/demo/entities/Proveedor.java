@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.GeneratedValue;
@@ -24,19 +25,17 @@ public class Proveedor {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @NotBlank
     private String nombre;
 
     @Column
+    @NotBlank
     private String telefono;
 
     @Column
+    @NotBlank
     private String direccion;
-
-    
-
-
-
-
+//Standalone 
     // Getters y Setters
     public Long getId() {
         return id;
@@ -69,7 +68,5 @@ public class Proveedor {
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
-
-
 
 }

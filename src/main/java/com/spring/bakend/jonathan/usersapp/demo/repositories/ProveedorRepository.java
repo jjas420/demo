@@ -7,5 +7,6 @@ import com.spring.bakend.jonathan.usersapp.demo.entities.User;
 
 public interface ProveedorRepository extends JpaRepository<Proveedor,Long> {
 
+    boolean existsByNombre(String nombre);
 
 }

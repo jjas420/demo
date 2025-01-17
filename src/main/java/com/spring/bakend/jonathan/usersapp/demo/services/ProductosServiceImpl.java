@@ -18,8 +18,12 @@ import com.spring.bakend.jonathan.usersapp.demo.repositories.ProveedorRepository
 public class ProductosServiceImpl implements ProductoService {
 
     private ProductoRepository repository;
+    private ProveedorRepository proveedorRepository;
 
-    public ProductosServiceImpl(ProductoRepository repository) {
+    public ProductosServiceImpl(ProductoRepository repository,
+    
+    ProveedorRepository proveedorRepository) {
+        this.proveedorRepository=proveedorRepository;
 
         this.repository = repository;
     }
@@ -41,11 +45,20 @@ public class ProductosServiceImpl implements ProductoService {
     @Override
     @Transactional
     public Producto save(Producto producto) {
+        Optional<Proveedor >provedorOptional= proveedorRepository.findById(producto.getProveedor().getId());
 
+        if(provedorOptional.isPresent()){
+            Proveedor proveedor=provedorOptional.get();
         producto.setCodigo_producto(this.generarCodigoProducto() );
+
+        producto.setProveedor(proveedor);
 
     
         return repository.save(producto);
+        }else{
+            throw new IllegalArgumentException("proveedor no existe");
+
+        }
 
     }
 
@@ -60,6 +73,7 @@ public class ProductosServiceImpl implements ProductoService {
                     productobd.setNombre(producto.getNombre());
                     productobd.setPrecio(producto.getPrecio());
                     productobd.setProveedor(producto.getProveedor());
+
                     productobd.setStock(producto.getStock());
                     
         

@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -22,13 +23,16 @@ public class Producto {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank
     private String nombre;
 
     @Column(nullable = false)
     private double precio;
     @Column(nullable = false, unique = true)
+
     private String codigo_producto;
     @Column(nullable = false)
+
     private Long Stock;
 
  

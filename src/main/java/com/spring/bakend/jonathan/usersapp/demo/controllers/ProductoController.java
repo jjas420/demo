@@ -71,7 +71,7 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         } catch (Exception e) {
             // Manejo de otros errores
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el usuario");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()+ "Error al guardar el usuario");
         }
 
         
