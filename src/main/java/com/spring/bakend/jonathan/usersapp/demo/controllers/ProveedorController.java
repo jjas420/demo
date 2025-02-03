@@ -42,6 +42,12 @@ public class ProveedorController {
         return service.findAll();
     }
 
+    @GetMapping("/buscar/{name}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+      public List<Proveedor> buscarporNombre(@PathVariable String name) {
+          return service.findByNameContainingNative(name);
+      }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> show(@PathVariable Long id) {

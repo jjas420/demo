@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 
 import com.spring.bakend.jonathan.usersapp.demo.entities.Proveedor;
@@ -22,5 +23,8 @@ public interface ProveedorService {
 
 
     void deleteById(Long id);
+
+           List<Proveedor> findByNameContainingNative(@Param("name") String name);
+
 
 }

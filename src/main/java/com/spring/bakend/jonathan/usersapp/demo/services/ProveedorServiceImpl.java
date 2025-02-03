@@ -40,7 +40,6 @@ public class ProveedorServiceImpl implements ProveedorService {
 
     @Override
     @Transactional
-
     public Proveedor save(Proveedor proveedor) {
         if (repository.existsByNombre(proveedor.getNombre())) {
             throw new IllegalArgumentException("El nombre ya está en uso.");
@@ -79,6 +78,16 @@ public class ProveedorServiceImpl implements ProveedorService {
     } catch (Exception e) {
         throw new RuntimeException("Ocurrió un error inesperado al intentar eliminar el registro con ID " + id, e);
     }
+    }
+
+    
+
+    @Override
+    public List<Proveedor> findByNameContainingNative(String name) {
+
+        return this.repository.findByNameContainingNative(name);
+
+
     }
 
 }

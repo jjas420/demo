@@ -147,4 +147,22 @@ public class UserServiceImpl implements UserService {
         return roles;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+
+    public List<User> findByNameContainingNative(String name) {
+
+        return((List <User>) this.repository.findByNameContainingNative(name)).stream().map(user->{
+
+            boolean admin= user.getRoles().stream().anyMatch(role-> "ROLE_ADMIN".equals(role.getName()));
+            user.setAdmin(admin);
+            return user;
+        
+        }).collect(Collectors.toList());
+
+
+    }
+
+    
+
 }

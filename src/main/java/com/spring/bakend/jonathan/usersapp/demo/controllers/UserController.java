@@ -47,6 +47,13 @@ public class UserController {
     public List<User> list() {
         return service.findAll();
     }
+    @GetMapping("/buscar/{name}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+      public List<User> buscarporNombre(@PathVariable String name) {
+          return service.findByNameContainingNative(name);
+      }
+
+
 
     
 
@@ -147,4 +154,8 @@ public class UserController {
         });
         return ResponseEntity.badRequest().body(errors);
     }
+
+
+
+
 }
