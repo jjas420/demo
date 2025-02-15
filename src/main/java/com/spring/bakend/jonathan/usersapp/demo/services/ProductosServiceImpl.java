@@ -1,5 +1,8 @@
 package com.spring.bakend.jonathan.usersapp.demo.services;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +24,9 @@ public class ProductosServiceImpl implements ProductoService {
     private ProveedorRepository proveedorRepository;
 
     public ProductosServiceImpl(ProductoRepository repository,
-    
-    ProveedorRepository proveedorRepository) {
-        this.proveedorRepository=proveedorRepository;
+
+            ProveedorRepository proveedorRepository) {
+        this.proveedorRepository = proveedorRepository;
 
         this.repository = repository;
     }
@@ -41,21 +44,24 @@ public class ProductosServiceImpl implements ProductoService {
     public Optional<Producto> findById(@NonNull Long id) {
         return repository.findById(id);
     }
+    
+   
 
     @Override
     @Transactional
     public Producto save(Producto producto) {
-        Optional<Proveedor >provedorOptional= proveedorRepository.findById(producto.getProveedor().getId());
+        Optional<Proveedor> provedorOptional = proveedorRepository.findById(producto.getProveedor().getId());
+        if (repository.existsByNombre(producto.getNombre())) {
+            throw new IllegalArgumentException("El nombre ya está en uso.");
+        }
+        if (provedorOptional.isPresent()) {
+            Proveedor proveedor = provedorOptional.get();
+            producto.setCodigo_producto(this.generarCodigoProducto());
 
-        if(provedorOptional.isPresent()){
-            Proveedor proveedor=provedorOptional.get();
-        producto.setCodigo_producto(this.generarCodigoProducto() );
+            producto.setProveedor(proveedor);
 
-        producto.setProveedor(proveedor);
-
-    
-        return repository.save(producto);
-        }else{
+            return repository.save(producto);
+        } else {
             throw new IllegalArgumentException("proveedor no existe");
 
         }
@@ -66,46 +72,108 @@ public class ProductosServiceImpl implements ProductoService {
     @Transactional
     public Optional<Producto> update(Producto producto, Long id) {
 
-                Optional<Producto> ProductoOptional= repository.findById(id);
+        Optional<Producto> ProductoOptional = repository.findById(id);
 
-                if (ProductoOptional.isPresent()) {
-                    Producto productobd = ProductoOptional.get();
-                    productobd.setNombre(producto.getNombre());
-                    productobd.setPrecio(producto.getPrecio());
-                    productobd.setProveedor(producto.getProveedor());
+        if (ProductoOptional.isPresent()) {
+            Producto productobd = ProductoOptional.get();
+            productobd.setNombre(producto.getNombre());
+            productobd.setPrecio(producto.getPrecio());
+            productobd.setProveedor(producto.getProveedor());
 
-                    productobd.setStock(producto.getStock());
-                    
-        
-                    return Optional.of(repository.save(productobd));
-                    
-                }
+            productobd.setStock(producto.getStock());
 
-                return Optional.empty();        
+            return Optional.of(repository.save(productobd));
+
+        }
+
+        return Optional.empty();
 
     }
+
     @Override
     @Transactional
     public void deleteById(Long id) {
-          try {
-        repository.deleteById(id);
-    } catch (EmptyResultDataAccessException e) {
-        throw new IllegalArgumentException("El registro con ID " + id + " no existe.", e);
-    } catch (DataIntegrityViolationException e) {
-        throw new IllegalStateException("No se puede eliminar el registro porque está relacionado con otros datos.", e);
-    } catch (Exception e) {
-        throw new RuntimeException("Ocurrió un error inesperado al intentar eliminar el registro con ID " + id, e);
-    }
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new IllegalArgumentException("El registro con ID " + id + " no existe.", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException("No se puede eliminar el registro porque está relacionado con otros datos.",
+                    e);
+        } catch (Exception e) {
+            throw new RuntimeException("Ocurrió un error inesperado al intentar eliminar el registro con ID " + id, e);
+        }
     }
 
     private String generarCodigoProducto() {
         // Obtener el último producto registrado por ID
-        Long ultimoId = repository.findTopByOrderByIdDesc().getId();  // Busca el último ID registrado
-        String prefijo = "P";  // Prefijo para los productos
-        long cantidadProductos = ultimoId + 1;  // El nuevo código será el último ID + 1
-        return prefijo + String.format("%04d", cantidadProductos);  // Código como "P0001", "P0002", etc.
+       SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    String fechaHora = sdf.format(new Date());
+    return "PROD-" + fechaHora; // Código como "P0001", "P0002", etc.
     }
 
+    @Override
+    public List<Producto> guardarProductos(List<Producto> productos) {
+        List <Producto> productoSS=new ArrayList<>();
+
+        productos.forEach(producto -> {
+            Optional<Proveedor> provedorOptional = proveedorRepository.findById(producto.getProveedor().getId());
+
+            producto.setCodigo_producto(this.generarCodigoProducto());
+            if (provedorOptional.isPresent()) {
+                Proveedor proveedor = provedorOptional.get();
+
+                producto.setProveedor(proveedor);
+                productoSS.add(producto);
+
+            } else {
+                throw new IllegalArgumentException("proveedor no existe");
+
+            }
+
+        });
+
+        return repository.saveAll(productoSS);
+
+
 
     }
 
+    @Override
+    @Transactional(readOnly = true)
+
+    public boolean validarProducto(Producto producto) {
+        Optional<Proveedor> provedorOptional = proveedorRepository.findById(producto.getProveedor().getId());
+        if (repository.existsByNombre(producto.getNombre())) {
+            throw new IllegalArgumentException("El nombre ya está en uso.");
+        }
+        if (provedorOptional.isPresent()) {
+            Proveedor proveedor = provedorOptional.get();
+            if (producto.getCodigo_producto()== null ){
+
+            producto.setCodigo_producto(this.generarCodigoProducto());
+            }
+            
+            producto.setProveedor(proveedor);
+
+            return true;
+
+        } else {
+            throw new IllegalArgumentException("proveedor no existe");
+
+        
+              }
+        
+
+        
+        
+        
+
+
+    }
+
+   
+
+    
+
+}

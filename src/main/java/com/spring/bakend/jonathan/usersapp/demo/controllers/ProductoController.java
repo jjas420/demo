@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,8 +42,8 @@ public class ProductoController {
     public List<Producto> list() {
         return service.findAll();
     }
-
-       @GetMapping("/{id}")
+    
+    @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> show(@PathVariable Long id) {
         Optional<Producto> ProductoOptional = service.findById(id);
@@ -69,9 +70,16 @@ public class ProductoController {
             errors.put("message", e.getMessage());  // El mensaje del error de unicidad
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-        } catch (Exception e) {
+        
+        } 
+
+       
+
+
+        catch (Exception e) {
+            
             // Manejo de otros errores
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()+ "Error al guardar el usuario");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getClass()+ " Error al guardar el producto "+ producto.getNombre());
         }
 
         
@@ -99,7 +107,15 @@ public class ProductoController {
         errors.put("message", e.getMessage());  // El mensaje del error de unicidad
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-    } catch (Exception e) {
+    }
+    
+    catch ( DataIntegrityViolationException e) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "ese nombre ya esta en uso");
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+    
+    catch (Exception e) {
         // Manejo de otros errores
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el producto");
     }
@@ -119,6 +135,8 @@ public class ProductoController {
         return ResponseEntity.notFound().build();
     }
 
+
+
     private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> {
@@ -129,5 +147,34 @@ public class ProductoController {
         return ResponseEntity.badRequest().body(errors);
     }
 
+    @PostMapping("validarProducto")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> validar(@Valid @RequestBody Producto producto, BindingResult result) {
+        if (result.hasErrors()) {
+            return validation(result);
+        }
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.validarProducto(producto));
+        
+        } catch (IllegalArgumentException e) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", "BAD_REQUEST");
+            errors.put("message", e.getMessage());  // El mensaje del error de unicidad
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        
+        } 
+
+       
+
+
+        catch (Exception e) {
+            
+            // Manejo de otros errores
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getClass()+ " Error al guardar el producto "+ producto.getNombre());
+        }
+
+        
+    }
 
 }

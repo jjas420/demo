@@ -3,9 +3,11 @@ package com.spring.bakend.jonathan.usersapp.demo.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 
 import com.spring.bakend.jonathan.usersapp.demo.entities.Producto;
+import com.spring.bakend.jonathan.usersapp.demo.entities.Proveedor;
 
 public interface ProductoService {
     List<Producto> findAll();
@@ -17,5 +19,8 @@ public interface ProductoService {
     Optional<Producto> update(Producto producto, Long id);
 
     void deleteById(Long id);
+
+    boolean validarProducto(Producto producto);
+    List<Producto> guardarProductos(List<Producto> productos); 
 
 }

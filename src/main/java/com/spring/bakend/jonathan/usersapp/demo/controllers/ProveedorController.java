@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -104,9 +105,15 @@ public class ProveedorController {
         errors.put("message", e.getMessage());  // El mensaje del error de unicidad
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-    } catch (Exception e) {
+    } 
+    catch ( DataIntegrityViolationException e) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("message", "ese nombre ya esta en uso");
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+    catch (Exception e) {
         // Manejo de otros errores
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el Proveedor");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("provedor no se pudo actualizar ");
     }
 }
 

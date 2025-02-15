@@ -7,6 +7,10 @@ import com.spring.bakend.jonathan.usersapp.demo.entities.Proveedor;
 
 public interface ProductoRepository  extends JpaRepository<Producto,Long>{
     Producto findTopByOrderByIdDesc();
+    boolean existsByNombre(String nombre);
+    
+
+
     
 
 

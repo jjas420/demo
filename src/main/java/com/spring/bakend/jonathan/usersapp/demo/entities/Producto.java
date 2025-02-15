@@ -12,30 +12,38 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import static jakarta.persistence.GenerationType.*;
+
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "productos")
 public class Producto {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
+    
     @NotBlank
+    @Column( unique = true)
     private String nombre;
 
     @Column(nullable = false)
+    @Positive(message = "El precio debe ser mayor a 0")
+
+    @NotNull
     private double precio;
-    @Column(nullable = false, unique = true)
 
+
+    @Column(unique = true)
     private String codigo_producto;
+
     @Column(nullable = false)
-
+     @Positive(message = "El precio debe ser mayor a 0")
+    @NotNull
     private Long Stock;
-
- 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proveedor_id", nullable = false)
