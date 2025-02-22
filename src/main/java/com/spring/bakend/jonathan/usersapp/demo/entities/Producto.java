@@ -31,7 +31,6 @@ public class Producto {
     private String nombre;
 
     @Column(nullable = false)
-    @Positive(message = "El precio debe ser mayor a 0")
 
     @NotNull
     private double precio;
@@ -40,8 +39,8 @@ public class Producto {
     @Column(unique = true)
     private String codigo_producto;
 
+
     @Column(nullable = false)
-     @Positive(message = "El precio debe ser mayor a 0")
     @NotNull
     private Long Stock;
 
