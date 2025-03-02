@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -19,6 +20,7 @@ import jakarta.persistence.GeneratedValue;
 import static jakarta.persistence.GenerationType.*;
 
 @Entity
+@Table(name = "proveedor")
 public class Proveedor {
     @Id
     @GeneratedValue(strategy = IDENTITY)

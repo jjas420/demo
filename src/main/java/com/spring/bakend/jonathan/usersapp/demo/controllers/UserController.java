@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.spring.bakend.jonathan.usersapp.demo.entities.User;
 import com.spring.bakend.jonathan.usersapp.demo.models.UserRequest;
@@ -124,9 +127,36 @@ public class UserController {
         errors.put("message", e.getMessage());  // El mensaje del error de unicidad
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-    } catch (Exception e) {
+    }
+    catch (DataIntegrityViolationException e) {
+        Map<String, String> errorsl = new HashMap<>();
+        String errorMessage =e.getMessage();
+        String regex = "for key '(.*?)'";  // Expresión regular para capturar el texto después de 'for key '
+    Pattern pattern = Pattern.compile(regex);
+   Matcher matcher = pattern.matcher(errorMessage);
+   System.out.println();
+   if (matcher.find()) {
+    String capturedValue = matcher.group(1);  // Extrae lo que está entre comillas
+    System.out.println("Captured value: " + capturedValue);
+    System.out.println("!"+capturedValue+"!");
+    if(capturedValue.equals("users.username_UNIQUE")){
+        errorsl.put("message", "el username ya esta en uso");  
+
+
+    }else{
+        errorsl.put("message", "el email ya esta en uso ");  
+
+    }
+}else{
+    System.out.println("no hay nada");
+}
+
+        errorsl.put("CONFLICT", "CONFLICT");
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorsl);
+
+} catch (Exception e) {
         // Manejo de otros errores
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el usuario");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al acualizar el usuario"+e.getClass());
     }
 
 

@@ -55,14 +55,18 @@ public class ProveedorServiceImpl implements ProveedorService {
 
     public Optional<Proveedor> update (Proveedor proveedor, Long id) {
         Optional<Proveedor> provedorOptional= repository.findById(id);
+       
         if (provedorOptional.isPresent()) {
             Proveedor proveedorbd = provedorOptional.get();
             proveedorbd.setNombre(proveedor.getNombre());
             proveedorbd.setTelefono(proveedor.getTelefono());
-
+        
             return Optional.of(repository.save(proveedorbd));
             
+      
+            
         }
+       
         return Optional.empty();
     }
 

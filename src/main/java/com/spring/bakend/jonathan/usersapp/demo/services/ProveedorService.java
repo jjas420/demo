@@ -23,8 +23,8 @@ public interface ProveedorService {
 
 
     void deleteById(Long id);
-
-           List<Proveedor> findByNameContainingNative(@Param("name") String name);
+    
+     List<Proveedor> findByNameContainingNative(@Param("name") String name);
 
 
 }

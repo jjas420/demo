@@ -34,6 +34,8 @@ public class User implements IUser {
     private Long id;
 
     @NotBlank
+    @Column( unique = true)
+
     private String name;
 
     @NotBlank
@@ -41,6 +43,8 @@ public class User implements IUser {
 
     @NotEmpty
     @Email
+    @Column( unique = true)
+
     private String email;
 
     @NotBlank
