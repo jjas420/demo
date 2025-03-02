@@ -31,7 +31,7 @@ public class EntradaProductoImpl implements EntradaProductoService {
 
     private ProductoRepository repositoryproducto;
 
-    @Autowired 
+    @Autowired
     private entradaProductoProductoService entradaProductoProductoService;
 
     public EntradaProductoImpl(ProveedorServiceImpl proveedorServiceImpl,
@@ -50,23 +50,51 @@ public class EntradaProductoImpl implements EntradaProductoService {
 
     public List<EntradaProducto> findAll() {
 
-
-       return entradaProductoRepository.findAll();
-
+        return entradaProductoRepository.findAll();
 
     }
 
     @Override
     public Optional<EntradaProducto> findById(@NonNull Long id) {
 
-        return  entradaProductoRepository.findById(id);
+        return entradaProductoRepository.findById(id);
 
     }
 
-
     @Override
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
+        EntradaProducto entrada = entradaProductoRepository.findById(id).orElseThrow(() -> new RuntimeException("Entrada no encontrada"));
+        List<EntradaProductoProducto> productosAEliminar = entrada.getProductos();
+        Producto productoBD=new Producto();
+        entradaProductoRepository.deleteById(id);
+
+        for (EntradaProductoProducto productoAEliminar : productosAEliminar) {
+            // Aseguramos que eliminamos correctamente la relación en la tabla intermedia
+            System.out.println(
+                    "nombre: " + productoAEliminar.getProducto().getNombre() + " id:" + productoAEliminar.getId());
+            Long cantidadAnterior = productoAEliminar.getCantidad();
+
+            productoBD = productosServiceImpl.findById(productoAEliminar.getProducto().getId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            productoBD.setStock(productoBD.getStock() - cantidadAnterior);
+            productosServiceImpl.update(productoBD, productoBD.getId());
+            entradaProductoProductoRepository.eliminarProducto(productoAEliminar.getId());
+
+            if (productoBD.getStock() <= 0) {
+                System.out.println("entro aqui");
+                productosServiceImpl.deleteById(productoBD.getId());
+                repositoryproducto.eliminarProducto(productoBD.getId());
+            }
+
+        }
+
+
+
+        
+        
+        
+
+
     }
 
     @Override
@@ -81,15 +109,14 @@ public class EntradaProductoImpl implements EntradaProductoService {
                 productosServiceImpl.save(producto);
 
                 if (repositoryproducto.existsByNombre(producto.getNombre())) {
-                    producto= repositoryproducto.findByNombre(producto.getNombre()).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                    producto = repositoryproducto.findByNombre(producto.getNombre())
+                            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
                     EntradaProductoProducto entradaProductoProducto = new EntradaProductoProducto();
                     entradaProductoProducto.setEntradaProducto(savedEntrada);
                     entradaProductoProducto.setProducto(producto);
                     entradaProductoProducto.setCantidad(producto.getStock());
                     entradaProductoProductoRepository.save(entradaProductoProducto);
-
-
 
                 }
 
@@ -118,100 +145,97 @@ public class EntradaProductoImpl implements EntradaProductoService {
 
     @Override
     public Optional<EntradaProducto> update(EntradaProducto entradaProducto, List<Producto> productos, Long id) {
-   // Aquí se extrae la instancia de EntradaProducto del Optional.
-   EntradaProducto entrada = entradaProductoRepository.findById(id)
-   .orElseThrow(() -> new RuntimeException("Entrada no encontrada"));
-    entrada.setFecha(entradaProducto.getFecha());
-    entrada.setProveedor(entrada.getProveedor());
-    
+        // Aquí se extrae la instancia de EntradaProducto del Optional.
+        EntradaProducto entrada = entradaProductoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entrada no encontrada"));
+        entrada.setFecha(entradaProducto.getFecha());
+        entrada.setProveedor(entrada.getProveedor());
 
+        List<EntradaProductoProducto> productosOriginales = entrada.getProductos();
+        List<EntradaProductoProducto> productosAEliminar = new ArrayList<>();
 
-List<EntradaProductoProducto> productosOriginales = entrada.getProductos();
-List<EntradaProductoProducto> productosAEliminar = new ArrayList<>();
+        // Iterar sobre la lista de productos actualizados
+        for (Producto productoNuevo : productos) {
+            if (productoNuevo.getId() == null) {
+                productosServiceImpl.save(productoNuevo);
+            }
 
-// Iterar sobre la lista de productos actualizados
-for (Producto productoNuevo : productos) {
-    if (productoNuevo.getId() == null) {
-        productosServiceImpl.save(productoNuevo);
-    }
-    
-Optional<EntradaProductoProducto> productoExistente = productosOriginales.stream()
-   .filter(ep -> ep.getProducto().getId().equals(productoNuevo.getId()))
-   .findFirst();
+            Optional<EntradaProductoProducto> productoExistente = productosOriginales.stream()
+                    .filter(ep -> ep.getProducto().getId().equals(productoNuevo.getId()))
+                    .findFirst();
 
-if (productoExistente.isPresent()) {
-   // Si el producto ya existe en la entrada, actualizamos la cantidad
-   EntradaProductoProducto entradaProductoProducto = productoExistente.get();
+            if (productoExistente.isPresent()) {
+                // Si el producto ya existe en la entrada, actualizamos la cantidad
+                EntradaProductoProducto entradaProductoProducto = productoExistente.get();
 
-   // Restar la cantidad anterior (lo que ya se había sumado previamente)
-   Long cantidadAnterior = entradaProductoProducto.getCantidad();
+                // Restar la cantidad anterior (lo que ya se había sumado previamente)
+                Long cantidadAnterior = entradaProductoProducto.getCantidad();
 
-   entradaProductoProducto.setCantidad( productoNuevo.getStock()); // Sumar la nueva cantidad
+                entradaProductoProducto.setCantidad(productoNuevo.getStock()); // Sumar la nueva cantidad
 
-   // Guardamos la relación actualizada
-   entradaProductoProductoRepository.save(entradaProductoProducto);
+                // Guardamos la relación actualizada
+                entradaProductoProductoRepository.save(entradaProductoProducto);
 
-   // Actualizamos el stock del producto en la base de datos
-   Producto productoBD = productosServiceImpl.findById(productoNuevo.getId())
-           .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-           productoBD.setStock(productoBD.getStock() - cantidadAnterior);
-   productoBD.setStock(productoBD.getStock() + productoNuevo.getStock());
-   productosServiceImpl.update(productoBD, productoBD.getId());
-} else {
-   // Si el producto no está en la entrada, lo agregamos
-   EntradaProductoProducto nuevaRelacion = new EntradaProductoProducto();
-   nuevaRelacion.setEntradaProducto(entrada);
-   nuevaRelacion.setProducto(productoNuevo);
-   nuevaRelacion.setCantidad(productoNuevo.getStock());
+                // Actualizamos el stock del producto en la base de datos
+                Producto productoBD = productosServiceImpl.findById(productoNuevo.getId())
+                        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                productoBD.setStock(productoBD.getStock() - cantidadAnterior);
+                productoBD.setStock(productoBD.getStock() + productoNuevo.getStock());
+                productosServiceImpl.update(productoBD, productoBD.getId());
+            } else {
+                // Si el producto no está en la entrada, lo agregamos
+                EntradaProductoProducto nuevaRelacion = new EntradaProductoProducto();
+                nuevaRelacion.setEntradaProducto(entrada);
+                nuevaRelacion.setProducto(productoNuevo);
+                nuevaRelacion.setCantidad(productoNuevo.getStock());
 
-   entradaProductoProductoRepository.save(nuevaRelacion);
+                entradaProductoProductoRepository.save(nuevaRelacion);
 
-   // Actualizamos el stock del producto en la base de datos
-   Producto productoBD = productosServiceImpl.findById(productoNuevo.getId())
-           .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-   productoBD.setStock(productoBD.getStock());
-   productosServiceImpl.update(productoBD, productoBD.getId());
-}
-}
+                // Actualizamos el stock del producto en la base de datos
+                Producto productoBD = productosServiceImpl.findById(productoNuevo.getId())
+                        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                productoBD.setStock(productoBD.getStock());
+                productosServiceImpl.update(productoBD, productoBD.getId());
+            }
+        }
 
-// Eliminar los productos que no están en la lista de productos actualizados
-for (EntradaProductoProducto productoOriginal : productosOriginales) {
-    // Verificamos si el producto original no está en la lista de productos actualizados
-    if (productos.stream().noneMatch(p -> p.getId().equals(productoOriginal.getProducto().getId()))) {
-        productosAEliminar.add(productoOriginal);
-        System.out.println("productos que no estan asociados para eliminar"+ productoOriginal.getProducto().getId()  );
-        System.out.println("cantidad " + productoOriginal.getCantidad());
-    }
-}
-Producto productoBD =new Producto();
-// Eliminar los productos que ya no están en la lista (eliminar de la relación)
-for (EntradaProductoProducto productoAEliminar : productosAEliminar) {
-    // Aseguramos que eliminamos correctamente la relación en la tabla intermedia
-    System.out.println("nombre: "+productoAEliminar.getProducto().getNombre() +" id:"+ productoAEliminar.getId() );
-    Long cantidadAnterior = productoAEliminar.getCantidad();
+        // Eliminar los productos que no están en la lista de productos actualizados
+        for (EntradaProductoProducto productoOriginal : productosOriginales) {
+            // Verificamos si el producto original no está en la lista de productos
+            // actualizados
+            if (productos.stream().noneMatch(p -> p.getId().equals(productoOriginal.getProducto().getId()))) {
+                productosAEliminar.add(productoOriginal);
+                System.out.println(
+                        "productos que no estan asociados para eliminar" + productoOriginal.getProducto().getId());
+                System.out.println("cantidad " + productoOriginal.getCantidad());
+            }
+        }
+        Producto productoBD = new Producto();
+        // Eliminar los productos que ya no están en la lista (eliminar de la relación)
+        for (EntradaProductoProducto productoAEliminar : productosAEliminar) {
+            // Aseguramos que eliminamos correctamente la relación en la tabla intermedia
+            System.out.println(
+                    "nombre: " + productoAEliminar.getProducto().getNombre() + " id:" + productoAEliminar.getId());
+            Long cantidadAnterior = productoAEliminar.getCantidad();
 
-     productoBD = productosServiceImpl.findById(productoAEliminar.getProducto().getId())
-    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-    productoBD.setStock(productoBD.getStock() - cantidadAnterior);
-    productosServiceImpl.update(productoBD, productoBD.getId());
-    entradaProductoProductoRepository.eliminarProducto(productoAEliminar.getId());
+            productoBD = productosServiceImpl.findById(productoAEliminar.getProducto().getId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            productoBD.setStock(productoBD.getStock() - cantidadAnterior);
+            productosServiceImpl.update(productoBD, productoBD.getId());
+            entradaProductoProductoRepository.eliminarProducto(productoAEliminar.getId());
 
+            if (productoBD.getStock() <= 0) {
+                System.out.println("entro aqui");
 
-    if (productoBD.getStock()<=0) {
-        System.out.println("entro aqui");
+                repositoryproducto.eliminarProducto(productoBD.getId());
+            }
 
-        repositoryproducto.eliminarProducto(productoBD.getId());        
-    }
-    
-}
+        }
 
-return Optional.of(entrada);
+        return Optional.of(entrada);
 
-
-}
-
-        
-   
     }
 
-  
+
+
+}

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,5 +95,19 @@ public class ProductoEntradaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+"  "+e.getMessage()+ "  "+ e.getCause());  // Retorna error 404 si no se encuentra la entrada
         }
     }
+
+
+     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+      Optional<EntradaProducto> entradaEliminar=  EntradaProductoService.findById(id);
+        if (entradaEliminar.isPresent()) {
+          EntradaProductoService.deleteById(id);
+            return ResponseEntity.ok("El registro con ID " + id + " ha sido eliminado correctamente.");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
 
 }
