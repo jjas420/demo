@@ -22,5 +22,8 @@ public interface ProductoService {
 
     boolean validarProducto(Producto producto);
     List<Producto> guardarProductos(List<Producto> productos); 
+    List<Producto> listaDeProductosProvedor(Long id);
+
+
 
 }

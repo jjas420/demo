@@ -172,6 +172,13 @@ public class ProductosServiceImpl implements ProductoService {
 
     }
 
+    @Override
+    @Transactional
+    public List<Producto> listaDeProductosProvedor(Long id) {
+        return this.repository.listaDeProductosProvedor(id);
+
+    }
+
    
 
     

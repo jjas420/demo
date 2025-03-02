@@ -176,5 +176,12 @@ public class ProductoController {
 
         
     }
+    @PostMapping("provedor")
+    @PreAuthorize("hasRole('ADMIN')")
+
+    public List<Producto> obtenerProductosPorProveedor(@RequestBody Map<String, Long> request) {
+    Long proveedorId = request.get("proveedor_id");
+    return service.listaDeProductosProvedor(proveedorId);
+    }
 
 }

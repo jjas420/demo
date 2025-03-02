@@ -1,5 +1,6 @@
 package com.spring.bakend.jonathan.usersapp.demo.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,11 +20,10 @@ public interface ProductoRepository  extends JpaRepository<Producto,Long>{
     @Transactional
     @Query(value = "DELETE FROM productos WHERE id = :id", nativeQuery = true)
     void eliminarProducto( Long id);
-
+    @Modifying
+@Transactional
+@Query(value = "SELECT * FROM productos WHERE proveedor_id=:id", nativeQuery = true)
+    List<Producto> listaDeProductosProvedor(Long id);
     
-
-
-    
-
 
 }
