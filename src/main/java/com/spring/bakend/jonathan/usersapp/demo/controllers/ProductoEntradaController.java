@@ -27,6 +27,8 @@ import com.spring.bakend.jonathan.usersapp.demo.services.EntradaProductoImpl;
 import com.spring.bakend.jonathan.usersapp.demo.services.EntradaProductoService;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/entradaProducto")
@@ -77,7 +79,7 @@ public class ProductoEntradaController {
                 .body(Collections.singletonMap("error", "el entrada n no se encontro por el id:" + id));
     }
 
-    @PostMapping("/actualizar/{entradaId}")
+    @PutMapping("/{entradaId}")
     @PreAuthorize("hasAnyRole( 'ADMIN')")
     public ResponseEntity<?> actualizarProductos(
             @PathVariable Long entradaId,  // ID de la entrada a actualizar
@@ -86,10 +88,7 @@ public class ProductoEntradaController {
         try {
           EntradaProducto nuevaEntrada = new EntradaProducto();
           nuevaEntrada.setFecha(new Date()); // Fecha actual
-          Producto producto = productosActualizados.get(0);
           
-  
-          nuevaEntrada.setProveedor(producto.getProveedor()); 
             Optional<EntradaProducto> entradaActualizada = EntradaProductoService.update(nuevaEntrada,productosActualizados,entradaId );
             return ResponseEntity.ok(entradaActualizada);  // Retorna la entrada actualizada
         } catch (RuntimeException e) {
