@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.bakend.jonathan.usersapp.demo.entities.Producto;
@@ -178,10 +179,26 @@ public class ProductoController {
     }
     @PostMapping("provedor")
     @PreAuthorize("hasRole('ADMIN')")
-
     public List<Producto> obtenerProductosPorProveedor(@RequestBody Map<String, Long> request) {
     Long proveedorId = request.get("proveedor_id");
     return service.listaDeProductosProvedor(proveedorId);
+    }
+
+
+
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Producto>> buscarProductos(
+            @RequestParam String name,
+            @RequestParam Long idProveedor) {
+        
+        List<Producto> productos = service.findByNameContainingNative(name, idProveedor);
+        
+        if (productos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Devuelve 204 si no hay resultados
+        }
+        
+        return ResponseEntity.ok(productos);
     }
 
 }

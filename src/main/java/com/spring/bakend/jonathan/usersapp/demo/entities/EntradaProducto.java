@@ -22,75 +22,51 @@ import jakarta.persistence.Table;
 @Entity
 public class EntradaProducto {
 
-
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-     @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proveedor_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "productos"}) 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "productos" })
     private Proveedor proveedor;
 
     @OneToMany(mappedBy = "entradaProducto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
-
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private List<EntradaProductoProducto> productos;
 
-
     private Date fecha;
-
-
-
 
     public Long getId() {
         return id;
     }
 
-
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public Proveedor getProveedor() {
         return proveedor;
     }
 
-
-
-
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
     }
-
 
     public List<EntradaProductoProducto> getProductos() {
         return productos;
     }
 
-
     public void setProductos(List<EntradaProductoProducto> productos) {
         this.productos = productos;
     }
-
 
     public Date getFecha() {
         return fecha;
     }
 
-
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
-
-   
-
-    
-
-
-
 }
-
-

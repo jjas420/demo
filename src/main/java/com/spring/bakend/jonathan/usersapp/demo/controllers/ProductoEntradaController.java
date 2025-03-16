@@ -44,6 +44,7 @@ public class ProductoEntradaController {
 
         nuevaEntrada.setProveedor(producto.getProveedor()); // Puedes cambiarlo si lo necesitas
 
+        
         // Guardamos la entrada con la lista de productos
         EntradaProductoService.save(nuevaEntrada, productos);
 
@@ -107,7 +108,7 @@ public class ProductoEntradaController {
         }
         return ResponseEntity.notFound().build();
     }
-
+    
 
 
 }
