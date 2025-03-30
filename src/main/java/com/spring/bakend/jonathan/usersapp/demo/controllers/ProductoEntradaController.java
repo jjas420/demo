@@ -118,7 +118,7 @@ public class ProductoEntradaController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
       Optional<EntradaProducto> entradaEliminar=  EntradaProductoService.findById(id);
         if (entradaEliminar.isPresent()) {
-          
+          EntradaProductoService.deleteById(id);
             return ResponseEntity.ok("El registro con ID " + id + " ha sido eliminado correctamente.");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
