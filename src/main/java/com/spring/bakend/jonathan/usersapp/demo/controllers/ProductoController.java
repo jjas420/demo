@@ -174,7 +174,6 @@ public class ProductoController {
             // Manejo de otros errores
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getClass()+ " Error al guardar el producto "+ producto.getNombre());
         }
-
         
     }
     @PostMapping("provedor")

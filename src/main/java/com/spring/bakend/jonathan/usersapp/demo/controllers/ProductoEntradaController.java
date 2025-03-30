@@ -85,6 +85,21 @@ public class ProductoEntradaController {
             @PathVariable Long entradaId,  // ID de la entrada a actualizar
             @RequestBody List<Producto> productosActualizados  // Lista de productos con las cantidades actualizadas
     ) {
+
+      
+      if(productosActualizados.size()==0){
+
+        Optional<EntradaProducto> entradaEliminar=  EntradaProductoService.findById(entradaId);
+        if (entradaEliminar.isPresent()) {
+          EntradaProductoService.deleteById(entradaId);
+            return ResponseEntity.ok("El registro con ID " + entradaId + " ha sido eliminado correctamente.");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body("El recurso solicitado no fue encontrado");          
+
+
+         
+      }else{
         try {
           EntradaProducto nuevaEntrada = new EntradaProducto();
           nuevaEntrada.setFecha(new Date()); // Fecha actual
@@ -94,6 +109,7 @@ public class ProductoEntradaController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+"  "+e.getMessage()+ "  "+ e.getCause());  // Retorna error 404 si no se encuentra la entrada
         }
+      }
     }
 
 
@@ -102,11 +118,11 @@ public class ProductoEntradaController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
       Optional<EntradaProducto> entradaEliminar=  EntradaProductoService.findById(id);
         if (entradaEliminar.isPresent()) {
-          EntradaProductoService.deleteById(id);
+          
             return ResponseEntity.ok("El registro con ID " + id + " ha sido eliminado correctamente.");
         }
-        return ResponseEntity.notFound().build();
-    }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body("El recurso solicitado no fue encontrado");    }
     
 
 

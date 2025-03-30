@@ -41,9 +41,7 @@ public class Producto {
     private String codigo_producto;
 
 
-    @Column(nullable = false)
-    @NotNull
-    @Min(value = 1, message = "El stock debe ser mayor a 0")    
+  
     private Long Stock;
 
     @ManyToOne(fetch = FetchType.LAZY)
