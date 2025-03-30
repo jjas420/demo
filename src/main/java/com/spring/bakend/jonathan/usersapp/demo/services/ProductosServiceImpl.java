@@ -179,6 +179,12 @@ public class ProductosServiceImpl implements ProductoService {
 
     }
 
+    @Override
+    public List<Producto> findByNameContainingNative(String name, Long id_proveedor) { 
+
+        return this.repository.findByNameContainingNative(name, id_proveedor);
+    }
+
    
 
     
