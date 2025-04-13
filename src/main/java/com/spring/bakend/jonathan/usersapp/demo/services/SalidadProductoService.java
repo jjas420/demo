@@ -15,9 +15,9 @@ public interface SalidadProductoService {
 
     Optional<SalidadProductos> findById(@NonNull Long id);
 
-    SalidadProductos save(SalidadProductos salidadProductos);
+    void save(SalidadProductos salidadProductos);
  
-    Optional<SalidadProductos> update(SalidadProductos salidadProductos, Long id);
+    void update(SalidadProductos salidadProductos, Long id);
 
     void deleteById(Long id);
 
