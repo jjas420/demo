@@ -17,13 +17,12 @@ public class ProductoSalidad {
     private Long id;
       @ManyToOne
     @JoinColumn(name = "producto_id")
-    
-
     private Producto producto;
 
 @ManyToOne
 @JoinColumn(name = "salida_id")
-@JsonBackReference
+@JsonBackReference  // Anotación de referencia inversa (lado "referenciado")
+
 private SalidadProductos salida;
 
 

@@ -129,6 +129,18 @@ public class SalidadProductoController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        Optional<SalidadProductos> userOptional = service.findById(id);
+        if (userOptional.isPresent()) {
+            service.deleteById(id);
+            return ResponseEntity.ok("El registro con ID " + id + " ha sido eliminado correctamente.");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
 }
 
 

@@ -31,8 +31,7 @@ public class SalidadProductos {
     private String usuarioResponsable;
 
     private String observaciones;
-
-    @OneToMany(mappedBy = "salida", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "salida", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ProductoSalidad> productos;
 

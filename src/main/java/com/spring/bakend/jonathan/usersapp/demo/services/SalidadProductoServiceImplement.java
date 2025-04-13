@@ -22,29 +22,30 @@ import com.spring.bakend.jonathan.usersapp.demo.entities.ProductoSalidad;
 import com.spring.bakend.jonathan.usersapp.demo.entities.SalidadProductos;
 import com.spring.bakend.jonathan.usersapp.demo.repositories.SalidadProductoRepository;
 import com.spring.bakend.jonathan.usersapp.demo.services.excepciónPersonalizadas.ExceptionSalidas;
+
 @Service
-public class SalidadProductoServiceImplement  implements SalidadProductoService{
+public class SalidadProductoServiceImplement implements SalidadProductoService {
 
     @Autowired
     SalidadProductoRepository salidadProductoRepository;
 
     @Autowired
     ProductoService productoService;
+
     @Override
     public List<SalidadProductos> findAll() {
-      return  salidadProductoRepository.findAll();
-       
+        return salidadProductoRepository.findAll();
+
     }
 
     @Override
     public Optional<SalidadProductos> findById(@NonNull Long id) {
         return salidadProductoRepository.findById(id);
-        
-    
+
     }
 
-        @Override
-        @Transactional
+    @Override
+    @Transactional
     public void save(SalidadProductos salidadProductos) {
         List<Producto> productosSinStock = new ArrayList<>();
 
@@ -52,84 +53,118 @@ public class SalidadProductoServiceImplement  implements SalidadProductoService{
         for (ProductoSalidad ps : salidadProductos.getProductos()) {
             Producto producto = productoService.findById(ps.getProducto().getId())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-    
+
             if (producto.getStock() < ps.getCantidad()) {
-                productosSinStock.add(producto);  // Agregar el ProductoSalidad con el error
+                productosSinStock.add(producto); // Agregar el ProductoSalidad con el error
             }
         }
-    
+
         if (!productosSinStock.isEmpty()) {
             throw new ExceptionSalidas(productosSinStock);
-        }else{
+        } else {
             for (ProductoSalidad ps : salidadProductos.getProductos()) {
-                Producto producto =productoService.findById(ps.getProducto().getId()).orElseThrow(() -> new RuntimeException("Producto no encontrado"));;
-        
+                Producto producto = productoService.findById(ps.getProducto().getId())
+                        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                ;
+
                 producto.setStock(producto.getStock() - ps.getCantidad());
                 productoService.update(producto, producto.getId());
             }
 
             salidadProductoRepository.save(salidadProductos);
-        
 
         }
-    
+
         // Si todo está ok, hacer el descuento y guardar
-       
+
     }
 
     @Override
+    @Transactional
+
     public void update(SalidadProductos nuevaSalida, Long id) {
+        // Obtener la salida existente
+
         SalidadProductos salidaExistente = salidadProductoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Salida no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Salida no encontrada"));
 
-// Paso 1: Restaurar el stock de los productos de la salida original
-for (ProductoSalidad psOriginal : salidaExistente.getProductos()) {
-    Producto producto = productoService.findById(psOriginal.getProducto().getId())
-            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        // Paso 1: Restaurar el stock de los productos de la salida original
+        for (ProductoSalidad psOriginal : salidaExistente.getProductos()) {
+            Producto producto = productoService.findById(psOriginal.getProducto().getId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-    producto.setStock(producto.getStock() + psOriginal.getCantidad());
-    productoService.update(producto, producto.getId());
-}
+            // Restaurar el stock de los productos de la salida original
+            producto.setStock(producto.getStock() + psOriginal.getCantidad());
+            productoService.update(producto, producto.getId());
+            System.out.println("paso por aqui");
+        }
 
-// Paso 2: Validar los nuevos productos
-List<Producto> productosSinStock = new ArrayList<>();
-for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
-    Producto producto = productoService.findById(psNuevo.getProducto().getId())
-            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        // Paso 2: Validar los nuevos productos
+        List<Producto> productosSinStock = new ArrayList<>();
+        for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
+            Producto producto = productoService.findById(psNuevo.getProducto().getId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-    if (producto.getStock() < psNuevo.getCantidad()) {
-        productosSinStock.add(producto);
-    }
-}
+            // Verificar si hay suficiente stock
+            if (producto.getStock() < psNuevo.getCantidad()) {
+                productosSinStock.add(producto);
+            }
+        }
 
-if (!productosSinStock.isEmpty()) {
-    // Si hay error, restauramos el stock original y lanzamos la excepción
-    throw new ExceptionSalidas(productosSinStock);
-}
+        if (!productosSinStock.isEmpty()) {
+            // Si hay error, restauramos el stock original y lanzamos la excepción
+            throw new ExceptionSalidas(productosSinStock);
+        }
 
-// Paso 3: Actualizar el stock con las nuevas cantidades
-for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
-    Producto producto = productoService.findById(psNuevo.getProducto().getId())
-            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        // Paso 3: Actualizar el stock con las nuevas cantidades
+        for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
+            Producto producto = productoService.findById(psNuevo.getProducto().getId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-    producto.setStock(producto.getStock() - psNuevo.getCantidad());
-    productoService.update(producto, producto.getId());
-}
+            // Actualizar el stock de los productos con la cantidad nueva
+            producto.setStock(producto.getStock() - psNuevo.getCantidad());
+            productoService.update(producto, producto.getId());
+        }
 
-// Paso 4: Actualizar la salida
-salidaExistente.setFecha(nuevaSalida.getFecha());
-salidaExistente.setProductos(nuevaSalida.getProductos());
+        // Paso 4: Actualizar la salida con los nuevos datos
+        salidaExistente.setFecha(nuevaSalida.getFecha());
+        salidaExistente.setMotivo(nuevaSalida.getMotivo());
+        salidaExistente.setUsuarioResponsable(nuevaSalida.getUsuarioResponsable());
+        salidaExistente.setObservaciones(nuevaSalida.getObservaciones());
 
-salidadProductoRepository.save(salidaExistente);
+        // Limpiar productos antiguos
+        salidaExistente.getProductos().clear();
+
+        // Agregar nuevos productos
+        for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
+            psNuevo.setSalida(salidaExistente); // Establecer la relación
+            salidaExistente.getProductos().add(psNuevo);
+        }
+        // Guardar la salida actualizada
+        salidadProductoRepository.save(salidaExistente);
     }
 
     @Override
+    @Transactional
+
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        // Paso 1: Buscar la salida existente por ID
+        SalidadProductos salidaExistente = salidadProductoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Salida no encontrada"));
+
+        // Paso 2: Restaurar el stock de los productos de la salida a eliminar
+        for (ProductoSalidad psOriginal : salidaExistente.getProductos()) {
+            Producto producto = productoService.findById(psOriginal.getProducto().getId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+            // Restaurar el stock de los productos de la salida original
+            producto.setStock(producto.getStock() + psOriginal.getCantidad());
+            productoService.update(producto, producto.getId());
+        }
+
+        // Paso 3: Eliminar la salida de la base de datos
+        salidadProductoRepository.deleteById(id);
+        System.out.println("Salida eliminada correctamente");
     }
-
-
-
 
 }
