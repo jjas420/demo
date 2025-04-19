@@ -111,7 +111,7 @@ public class SalidadProductoController {
 
             // Llamar al servicio para actualizar la salida de productos
             service.update(nuevaSalida, id);
-            return ResponseEntity.ok().body("Salida actualizada exitosamente");
+            return ResponseEntity.ok().body(nuevaSalida);
         } catch (ExceptionSalidas ex) {
             List<Producto> productosConError = ex.getProductosConError();
             List<String> detallesError = productosConError.stream()
@@ -135,7 +135,7 @@ public class SalidadProductoController {
         Optional<SalidadProductos> userOptional = service.findById(id);
         if (userOptional.isPresent()) {
             service.deleteById(id);
-            return ResponseEntity.ok("El registro con ID " + id + " ha sido eliminado correctamente.");
+            return ResponseEntity.ok(id);
         }
         return ResponseEntity.notFound().build();
     }
