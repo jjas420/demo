@@ -200,4 +200,20 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
+    @GetMapping("/buscarXnombre")
+    public ResponseEntity<List<Producto>> buscarProductosXnombre(
+            @RequestParam String name
+           ) {
+        
+        List<Producto> productos = service.findByName(name);
+        
+        if (productos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Devuelve 204 si no hay resultados
+        }
+        
+        return ResponseEntity.ok(productos);
+    }
+
+
+
 }

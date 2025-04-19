@@ -185,6 +185,15 @@ public class ProductosServiceImpl implements ProductoService {
         return this.repository.findByNameContainingNative(name, id_proveedor);
     }
 
+    @Override
+    public List<Producto> findByName(String name) {
+        // TODO Auto-generated method stub
+
+        return this.repository.findByName(name);
+
+    }
+
+
    
 
     

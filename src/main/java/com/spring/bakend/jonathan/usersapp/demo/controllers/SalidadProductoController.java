@@ -59,7 +59,7 @@ public class SalidadProductoController {
 
        try {
         service.save(salidadProductos);
-        return ResponseEntity.ok("Salida registrada correctamente.");
+        return ResponseEntity.ok(salidadProductos);
     } catch (ExceptionSalidas e) {
         // Crear un mensaje más detallado con los productos con error
         List<Producto> productosConError = e.getProductosConError();

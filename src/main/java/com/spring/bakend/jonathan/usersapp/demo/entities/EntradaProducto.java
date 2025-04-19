@@ -18,6 +18,10 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Table;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Temporal;
+
+
 
 @Entity
 public class EntradaProducto {

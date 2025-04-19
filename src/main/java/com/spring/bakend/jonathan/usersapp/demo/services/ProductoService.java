@@ -26,6 +26,9 @@ public interface ProductoService {
 
     List<Producto> findByNameContainingNative(@Param("name") String name, @Param("idProveedor") Long idProveedor);
 
+    List<Producto> findByName(@Param("name") String name);
+    
+
 
 
 
