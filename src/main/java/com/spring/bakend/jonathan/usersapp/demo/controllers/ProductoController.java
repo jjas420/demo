@@ -214,6 +214,22 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
+    @GetMapping("/buscarXcodigo")
+    public ResponseEntity<?> buscarProductosXcodigo(
+            @RequestParam String codigo
+           ) {
+        
+            Optional<Producto> ProductoOptional = service.findByCodigoProducto(codigo);
+            if (ProductoOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(ProductoOptional.orElseThrow());
+            }
+    
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("error", "el producto no se encontro con  el :"+ codigo));
+    }
+
+
+
 
 
 }
