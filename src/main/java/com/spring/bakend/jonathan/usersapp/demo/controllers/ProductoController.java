@@ -225,7 +225,7 @@ public class ProductoController {
             }
     
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Collections.singletonMap("error", "el producto no se encontro con  el :"+ codigo));
+                    .body(Collections.singletonMap("error", "el producto no se encontro con  el codigo:"+ codigo));
     }
 
 
