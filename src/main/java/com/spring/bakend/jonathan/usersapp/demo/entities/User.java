@@ -55,20 +55,8 @@ public class User implements IUser {
     @NotBlank
     private String password;
 
-    @Transient
 //    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private boolean admin;
-
-
-    public boolean isAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
-    }
-
-    @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
+   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name="users_roles",
@@ -77,6 +65,10 @@ public class User implements IUser {
         uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "role_id"})}
     )
     private List<Role> roles;
+
+ 
+
+   
     public User() {
         this.roles = new ArrayList<>();
     }

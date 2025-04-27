@@ -1,5 +1,9 @@
 package com.spring.bakend.jonathan.usersapp.demo.models;
 
+import java.util.List;
+
+import com.spring.bakend.jonathan.usersapp.demo.entities.Role;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,14 +24,23 @@ public class UserRequest implements IUser {
     @Size(min=4, max = 12)
     private String username;
     
-    private boolean admin;
+    private List<Role> admin;
+    private List<Role> roles;
 
-    public boolean isAdmin() {
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public List<Role> isAdmin() {
         return admin;
     }
 
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+    public void setAdmin(List<Role> admin) {
+        this.admin = (List<Role>) admin;
     }
 
 
