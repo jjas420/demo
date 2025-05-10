@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.bakend.jonathan.usersapp.demo.entities.Producto;
@@ -173,15 +174,62 @@ public class ProductoController {
             // Manejo de otros errores
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getClass()+ " Error al guardar el producto "+ producto.getNombre());
         }
-
         
     }
     @PostMapping("provedor")
     @PreAuthorize("hasRole('ADMIN')")
-
     public List<Producto> obtenerProductosPorProveedor(@RequestBody Map<String, Long> request) {
     Long proveedorId = request.get("proveedor_id");
     return service.listaDeProductosProvedor(proveedorId);
     }
+
+
+
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Producto>> buscarProductos(
+            @RequestParam String name,
+            @RequestParam Long idProveedor) {
+        
+        List<Producto> productos = service.findByNameContainingNative(name, idProveedor);
+        
+        if (productos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Devuelve 204 si no hay resultados
+        }
+        
+        return ResponseEntity.ok(productos);
+    }
+
+    @GetMapping("/buscarXnombre")
+    public ResponseEntity<List<Producto>> buscarProductosXnombre(
+            @RequestParam String name
+           ) {
+        
+        List<Producto> productos = service.findByName(name);
+        
+        if (productos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Devuelve 204 si no hay resultados
+        }
+        
+        return ResponseEntity.ok(productos);
+    }
+
+    @GetMapping("/buscarXcodigo")
+    public ResponseEntity<?> buscarProductosXcodigo(
+            @RequestParam String codigo
+           ) {
+        
+            Optional<Producto> ProductoOptional = service.findByCodigoProducto(codigo);
+            if (ProductoOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(ProductoOptional.orElseThrow());
+            }
+    
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("error", "el producto no se encontro con  el codigo:"+ codigo));
+    }
+
+
+
+
 
 }
