@@ -26,6 +26,16 @@ public class UserRequest implements IUser {
     
     private List<Role> admin;
     private List<Role> roles;
+    @NotBlank
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public List<Role> getRoles() {
         return roles;
