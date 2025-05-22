@@ -40,6 +40,7 @@ public class EntradaProducto {
     private List<EntradaProductoProducto> productos;
 
     private Date fecha;
+    private String responsable;
 
     public Long getId() {
         return id;
@@ -72,5 +73,15 @@ public class EntradaProducto {
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
+
+    public String getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(String responsable) {
+        this.responsable = responsable;
+    }
+
+   
 
 }

@@ -38,17 +38,17 @@ public class ProductoEntradaController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-      public ResponseEntity<EntradaProducto> crearEntrada(@RequestBody List<Producto> productos) {
+      public ResponseEntity<?> crearEntrada(@RequestBody entradaRequest entradaRequest) {
         EntradaProducto nuevaEntrada = new EntradaProducto();
         nuevaEntrada.setFecha(new Date()); // Fecha actual
-        Producto producto = productos.get(0);
+        nuevaEntrada.setResponsable(entradaRequest.getObservacion());
+        Producto producto = entradaRequest.getProductos().get(0);
+        
         
 
         nuevaEntrada.setProveedor(producto.getProveedor()); // Puedes cambiarlo si lo necesitas
-
-        
         // Guardamos la entrada con la lista de productos
-        EntradaProductoService.save(nuevaEntrada, productos);
+        EntradaProductoService.save(nuevaEntrada, entradaRequest.getProductos());
 
         return ResponseEntity.ok(nuevaEntrada);
       }
@@ -83,11 +83,11 @@ public class ProductoEntradaController {
     @PreAuthorize("hasAnyRole( 'ADMIN')")
     public ResponseEntity<?> actualizarProductos(
             @PathVariable Long entradaId,  // ID de la entrada a actualizar
-            @RequestBody List<Producto> productosActualizados  // Lista de productos con las cantidades actualizadas
+           @RequestBody entradaRequest entradaRequest  // Lista de productos con las cantidades actualizadas
     ) {
 
       
-      if(productosActualizados.size()==0){
+      if(entradaRequest.getProductos().size()==0){
 
         Optional<EntradaProducto> entradaEliminar=  EntradaProductoService.findById(entradaId);
         if (entradaEliminar.isPresent()) {
@@ -102,9 +102,10 @@ public class ProductoEntradaController {
       }else{
         try {
           EntradaProducto nuevaEntrada = new EntradaProducto();
-          nuevaEntrada.setFecha(new Date()); // Fecha actual
+          nuevaEntrada.setFecha(new Date());
+          nuevaEntrada.setResponsable(entradaRequest.getObservacion()); // Fecha actual
           
-            Optional<EntradaProducto> entradaActualizada = EntradaProductoService.update(nuevaEntrada,productosActualizados,entradaId );
+            Optional<EntradaProducto> entradaActualizada = EntradaProductoService.update(nuevaEntrada,entradaRequest.getProductos(),entradaId );
             return ResponseEntity.ok(entradaActualizada);  // Retorna la entrada actualizada
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+"  "+e.getMessage()+ "  "+ e.getCause());  // Retorna error 404 si no se encuentra la entrada

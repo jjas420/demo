@@ -20,16 +20,15 @@ public class EntradaProductoProducto {
     @ManyToOne
     @JoinColumn(name = "entrada_producto_id")
     @JsonBackReference
-
     private EntradaProducto entradaProducto;
 
     
     @ManyToOne
     @JoinColumn(name = "producto_id")
     @JsonIgnoreProperties("productos") // Evita el bucle aquí
-
     private Producto producto;
 
+    private String responsable;
 
     private Long cantidad;
 
@@ -71,6 +70,16 @@ public class EntradaProductoProducto {
 
     public void setCantidad(Long cantidad) {
         this.cantidad = cantidad;
+    }
+
+
+    public String getResponsable() {
+        return responsable;
+    }
+
+
+    public void setResponsable(String responsable) {
+        this.responsable = responsable;
     }
 
 
