@@ -42,6 +42,8 @@ public class ProductoEntradaController {
         EntradaProducto nuevaEntrada = new EntradaProducto();
         nuevaEntrada.setFecha(new Date()); // Fecha actual
         nuevaEntrada.setResponsable(entradaRequest.getObservacion());
+        nuevaEntrada.setTotalEngeneral(entradaRequest.getTotalEngeneral());
+
         Producto producto = entradaRequest.getProductos().get(0);
         
         
@@ -104,7 +106,8 @@ public class ProductoEntradaController {
           EntradaProducto nuevaEntrada = new EntradaProducto();
           nuevaEntrada.setFecha(new Date());
           nuevaEntrada.setResponsable(entradaRequest.getObservacion()); // Fecha actual
-          
+                  nuevaEntrada.setTotalEngeneral(entradaRequest.getTotalEngeneral());
+
             Optional<EntradaProducto> entradaActualizada = EntradaProductoService.update(nuevaEntrada,entradaRequest.getProductos(),entradaId );
             return ResponseEntity.ok(entradaActualizada);  // Retorna la entrada actualizada
         } catch (RuntimeException e) {

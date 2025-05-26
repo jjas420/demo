@@ -32,6 +32,33 @@ public class EntradaProductoProducto {
 
     private Long cantidad;
 
+     private  double totalPorProducto;
+    private double totalEngeneral;
+    
+
+
+  
+
+
+    public double getTotalPorProducto() {
+        return totalPorProducto;
+    }
+
+
+    public void setTotalPorProducto(double totalPorProducto) {
+        this.totalPorProducto = totalPorProducto;
+    }
+
+
+    public double getTotalEngeneral() {
+        return totalEngeneral;
+    }
+
+
+    public void setTotalEngeneral(double totalEngeneral) {
+        this.totalEngeneral = totalEngeneral;
+    }
+
 
     public Long getId() {
         return id;

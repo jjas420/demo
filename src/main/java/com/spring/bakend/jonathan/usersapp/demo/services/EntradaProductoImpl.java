@@ -116,6 +116,9 @@ public class EntradaProductoImpl implements EntradaProductoService {
                     entradaProductoProducto.setEntradaProducto(savedEntrada);
                     entradaProductoProducto.setProducto(producto);
                     entradaProductoProducto.setCantidad(producto.getStock());
+                    entradaProductoProducto.setTotalPorProducto(producto.getStock()*producto.getPrecio());
+                    entradaProductoProducto.setTotalEngeneral(savedEntrada.getTotalEngeneral());
+                    
                     
                     entradaProductoProductoRepository.save(entradaProductoProducto);
 
@@ -127,6 +130,8 @@ public class EntradaProductoImpl implements EntradaProductoService {
                 entradaProductoProducto.setProducto(producto);
                 entradaProductoProducto.setResponsable(savedEntrada.getResponsable());
                 entradaProductoProducto.setCantidad(producto.getStock());
+                entradaProductoProducto.setTotalPorProducto(producto.getStock()*producto.getPrecio());
+                entradaProductoProducto.setTotalEngeneral(savedEntrada.getTotalEngeneral());
 
                 Producto productoviejo = productosServiceImpl.findById(producto.getId())
                         .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -179,6 +184,9 @@ public class EntradaProductoImpl implements EntradaProductoService {
 
                 entradaProductoProducto.setCantidad(productoNuevo.getStock()); // Sumar la nueva cantidad
                 entradaProductoProducto.setResponsable(entradaProducto.getResponsable());
+                entradaProductoProducto.setTotalPorProducto(productoNuevo.getStock()*productoNuevo.getPrecio());
+                                                entradaProductoProducto.setTotalEngeneral(entrada.getTotalEngeneral());
+
                 entradaProductoProductoRepository.save(entradaProductoProducto);
 
                 // Actualizamos el stock del producto en la base de datos
@@ -193,6 +201,10 @@ public class EntradaProductoImpl implements EntradaProductoService {
                 nuevaRelacion.setEntradaProducto(entrada);
                 nuevaRelacion.setProducto(productoNuevo);
                 nuevaRelacion.setCantidad(productoNuevo.getStock());
+                nuevaRelacion.setTotalPorProducto(productoNuevo.getStock()*productoNuevo.getPrecio());
+                                nuevaRelacion.setTotalEngeneral(entrada.getTotalEngeneral());
+
+                
 
                 entradaProductoProductoRepository.save(nuevaRelacion);
 

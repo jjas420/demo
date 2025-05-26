@@ -40,7 +40,21 @@ public class EntradaProducto {
     private List<EntradaProductoProducto> productos;
 
     private Date fecha;
+    
     private String responsable;
+    private double totalEngeneral;
+    
+    
+
+   
+
+    public double getTotalEngeneral() {
+        return totalEngeneral;
+    }
+
+    public void setTotalEngeneral(double totalEngeneral) {
+        this.totalEngeneral = totalEngeneral;
+    }
 
     public Long getId() {
         return id;
