@@ -101,7 +101,16 @@ public class EntradaProductoImpl implements EntradaProductoService {
     @Transactional
     public EntradaProducto save(EntradaProducto entradaProducto, List<Producto> productos) {
 
-        EntradaProducto savedEntrada = entradaProductoRepository.save(entradaProducto);
+        double total = 0;
+
+        for (Producto producto : productos){
+                                total+=(producto.getStock()*producto.getPrecio());
+
+
+        }
+        entradaProducto.setTotalEngeneral(total);
+                EntradaProducto savedEntrada = entradaProductoRepository.save(entradaProducto);
+
 
         for (Producto producto : productos) {
             if (producto.getId() == null) {
@@ -117,7 +126,8 @@ public class EntradaProductoImpl implements EntradaProductoService {
                     entradaProductoProducto.setProducto(producto);
                     entradaProductoProducto.setCantidad(producto.getStock());
                     entradaProductoProducto.setTotalPorProducto(producto.getStock()*producto.getPrecio());
-                    entradaProductoProducto.setTotalEngeneral(savedEntrada.getTotalEngeneral());
+                    
+                    entradaProductoProducto.setTotalEngeneral(total);
                     
                     
                     entradaProductoProductoRepository.save(entradaProductoProducto);
@@ -125,13 +135,14 @@ public class EntradaProductoImpl implements EntradaProductoService {
                 }
 
             } else {
+
                 EntradaProductoProducto entradaProductoProducto = new EntradaProductoProducto();
                 entradaProductoProducto.setEntradaProducto(savedEntrada);
                 entradaProductoProducto.setProducto(producto);
                 entradaProductoProducto.setResponsable(savedEntrada.getResponsable());
                 entradaProductoProducto.setCantidad(producto.getStock());
                 entradaProductoProducto.setTotalPorProducto(producto.getStock()*producto.getPrecio());
-                entradaProductoProducto.setTotalEngeneral(savedEntrada.getTotalEngeneral());
+                entradaProductoProducto.setTotalEngeneral(total);
 
                 Producto productoviejo = productosServiceImpl.findById(producto.getId())
                         .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -158,6 +169,15 @@ public class EntradaProductoImpl implements EntradaProductoService {
         entrada.setFecha(entradaProducto.getFecha());
         entrada.setProveedor(entrada.getProveedor());
         entrada.setResponsable(entradaProducto.getResponsable());
+
+          double total = 0;
+
+        for (Producto producto : productos){
+                                total+=(producto.getStock()*producto.getPrecio());
+
+
+        }
+        entrada.setTotalEngeneral(total);
         String responsable=entradaProducto.getResponsable();
         System.out.println(responsable);
 
