@@ -35,6 +35,7 @@ public class EntradaProductoProducto {
      private  double totalPorProducto;
     private double totalEngeneral;
     
+    
 
 
   

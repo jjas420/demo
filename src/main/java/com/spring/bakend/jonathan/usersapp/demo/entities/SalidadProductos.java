@@ -33,6 +33,15 @@ public class SalidadProductos {
     private String usuarioResponsable;
 
     private String observaciones;
+    private double totalGeneral;
+    public double getTotalGeneral() {
+        return totalGeneral;
+    }
+
+    public void setTotalGeneral(double totalGeneral) {
+        this.totalGeneral = totalGeneral;
+    }
+
     @OneToMany(mappedBy = "salida", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ProductoSalidad> productos;

@@ -22,9 +22,9 @@ public class ProductoSalidad {
 @ManyToOne
 @JoinColumn(name = "salida_id")
 @JsonBackReference  // Anotación de referencia inversa (lado "referenciado")
-
 private SalidadProductos salida;
 
+private double totalPorPRoducto;
 
     public Long getId() {
         return id;
@@ -59,6 +59,14 @@ private SalidadProductos salida;
      }
 
     private Long cantidad;
+
+    public double getTotalPorPRoducto() {
+        return totalPorPRoducto;
+    }
+
+    public void setTotalPorPRoducto(double totalPorPRoducto) {
+        this.totalPorPRoducto = totalPorPRoducto;
+    }
 
   
 
