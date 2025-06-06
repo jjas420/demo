@@ -90,84 +90,62 @@ public class SalidadProductoServiceImplement implements SalidadProductoService {
         // Si todo está ok, hacer el descuento y guardar
 
     }
+@Override
+@Transactional
+public void update(SalidadProductos nuevaSalida, Long id) {
+    // 1) Obtener la salida existente
+    SalidadProductos salidaExistente = salidadProductoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Salida no encontrada"));
 
-    @Override
-    @Transactional
-
-    public void update(SalidadProductos nuevaSalida, Long id) {
-        // Obtener la salida existente
-
-        SalidadProductos salidaExistente = salidadProductoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Salida no encontrada"));
-
-        // Paso 1: Restaurar el stock de los productos de la salida original
-        for (ProductoSalidad psOriginal : salidaExistente.getProductos()) {
-            Producto producto = productoService.findById(psOriginal.getProducto().getId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-            // Restaurar el stock de los productos de la salida original
-            producto.setStock(producto.getStock() + psOriginal.getCantidad());
-            productoService.update(producto, producto.getId());
-            System.out.println("paso por aqui");
-        }
-
-        // Paso 2: Validar los nuevos productos
-        List<Producto> productosSinStock = new ArrayList<>();
-        for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
-            Producto producto = productoService.findById(psNuevo.getProducto().getId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-            // Verificar si hay suficiente stock
-            if (producto.getStock() < psNuevo.getCantidad()) {
-                productosSinStock.add(producto);
-            }
-        }
-
-        if (!productosSinStock.isEmpty()) {
-            // Si hay error, restauramos el stock original y lanzamos la excepción
-            throw new ExceptionSalidas(productosSinStock);
-        }
-
-        // Paso 3: Actualizar el stock con las nuevas cantidades
-        for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
-            Producto producto = productoService.findById(psNuevo.getProducto().getId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-            // Actualizar el stock de los productos con la cantidad nueva
-            producto.setStock(producto.getStock() - psNuevo.getCantidad());
-            productoService.update(producto, producto.getId());
-        }
-
-        // Paso 4: Actualizar la salida con los nuevos datos
-        salidaExistente.setFecha(nuevaSalida.getFecha());
-        salidaExistente.setMotivo(nuevaSalida.getMotivo());
-        salidaExistente.setUsuarioResponsable(nuevaSalida.getUsuarioResponsable());
-        salidaExistente.setObservaciones(nuevaSalida.getObservaciones());
-
-        // Limpiar productos antiguos
-        salidaExistente.getProductos().clear();
-        double total=0;
-        // Agregar nuevos productos
-        for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
-            
-
-            psNuevo.setSalida(salidaExistente); // Establecer la relación
-            salidaExistente.getProductos().add(psNuevo);
-        }
-
-        List<ProductoSalidad> auxproductos = new ArrayList();
-        for (ProductoSalidad producto : salidaExistente.getProductos()) {
-            total += (producto.getCantidad() * producto.getProducto().getPrecio());
-            producto.setTotalPorPRoducto(producto.getCantidad() * producto.getProducto().getPrecio());
-
-            auxproductos.add(producto);
-
-        }
-        salidaExistente.setProductos(auxproductos);
-        // Guardar la salida actualizada
-
-        salidadProductoRepository.save(salidaExistente);
+    // 2) Restaurar stock de la salida original
+    for (ProductoSalidad psOriginal : salidaExistente.getProductos()) {
+        Producto producto = productoService.findById(psOriginal.getProducto().getId())
+            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setStock(producto.getStock() + psOriginal.getCantidad());
+        productoService.update(producto, producto.getId());
     }
+
+    // 3) Validar stock de los nuevos productos
+    List<Producto> productosSinStock = new ArrayList<>();
+    for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
+        Producto producto = productoService.findById(psNuevo.getProducto().getId())
+            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        if (producto.getStock() < psNuevo.getCantidad()) {
+            productosSinStock.add(producto);
+        }
+    }
+    if (!productosSinStock.isEmpty()) {
+        throw new ExceptionSalidas(productosSinStock);
+    }
+
+    // 4) Descontar stock de los nuevos productos
+    for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
+        Producto producto = productoService.findById(psNuevo.getProducto().getId())
+            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setStock(producto.getStock() - psNuevo.getCantidad());
+        productoService.update(producto, producto.getId());
+    }
+
+    // 5) Actualizar campos de la cabecera
+    salidaExistente.setFecha(nuevaSalida.getFecha());
+    salidaExistente.setMotivo(nuevaSalida.getMotivo());
+    salidaExistente.setUsuarioResponsable(nuevaSalida.getUsuarioResponsable());
+    salidaExistente.setObservaciones(nuevaSalida.getObservaciones());
+
+    // 6) Reemplazar detalle: limpiar y volver a poblar la misma lista
+    List<ProductoSalidad> detalle = salidaExistente.getProductos();
+    detalle.clear();  // con orphanRemoval=true Hibernate eliminará los antiguos
+
+    for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
+        psNuevo.setSalida(salidaExistente);
+        double tot = psNuevo.getCantidad() * psNuevo.getProducto().getPrecio();
+        psNuevo.setTotalPorPRoducto(tot);
+        detalle.add(psNuevo);
+    }
+
+    // 7) Guardar los cambios
+    salidadProductoRepository.save(salidaExistente);
+}
 
     @Override
     @Transactional

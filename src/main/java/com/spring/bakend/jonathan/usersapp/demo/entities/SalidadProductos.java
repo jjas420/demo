@@ -42,7 +42,12 @@ public class SalidadProductos {
         this.totalGeneral = totalGeneral;
     }
 
-    @OneToMany(mappedBy = "salida", cascade = CascadeType.ALL)
+
+ @OneToMany(
+  mappedBy      = "salida",
+  cascade       = CascadeType.ALL,
+  orphanRemoval = true
+)
     @JsonManagedReference
     private List<ProductoSalidad> productos;
 
