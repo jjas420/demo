@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -31,8 +32,8 @@ public class Producto {
     private String nombre;
 
     @Column(nullable = false)
-
     @NotNull
+@Min(value = 1, message = "El precio debe ser mayor a 0")    
     private double precio;
 
 
@@ -40,8 +41,7 @@ public class Producto {
     private String codigo_producto;
 
 
-    @Column(nullable = false)
-    @NotNull
+  
     private Long Stock;
 
     @ManyToOne(fetch = FetchType.LAZY)

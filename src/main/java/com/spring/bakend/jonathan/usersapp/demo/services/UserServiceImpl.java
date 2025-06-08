@@ -42,8 +42,6 @@ public class UserServiceImpl implements UserService {
     public List<User> findAll() {
         return((List <User>) this.repository.findAll()).stream().map(user->{
 
-            boolean admin= user.getRoles().stream().anyMatch(role-> "ROLE_ADMIN".equals(role.getName()));
-            user.setAdmin(admin);
             return user;
         
         }).collect(Collectors.toList());
@@ -55,8 +53,6 @@ public class UserServiceImpl implements UserService {
         return this.repository.findAll(pageable).map(
             user->{
 
-                boolean admin= user.getRoles().stream().anyMatch(role-> "ROLE_ADMIN".equals(role.getName()));
-                user.setAdmin(admin);
                 return user;
             
             }); 
@@ -79,9 +75,12 @@ public class UserServiceImpl implements UserService {
         if (repository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
         }
-     
-        
-        user.setRoles(getRoles(user));
+      
+
+        // Asignar los roles al usuario
+        user.setRoles(user.getRoles());
+    
+        // Guardar el usuario. Esto también actualizará la relación en la tabla intermedia `users_roles`.
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return repository.save(user);
@@ -106,8 +105,9 @@ public class UserServiceImpl implements UserService {
             userDb.setName(user.getName());
             userDb.setUsername( user.getUsername());
            
-            
-            userDb.setRoles(getRoles(user));
+            userDb.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            userDb.setRoles(user.getRoles());
 
             
             return Optional.of(repository.save(userDb));
@@ -133,12 +133,7 @@ public class UserServiceImpl implements UserService {
     private List<Role> getRoles(IUser user) {
         List <Role> roles= new ArrayList<>();
 
-        Optional <Role> OptionalRoleUser= roleRepository.findByName("Role_USER");
-        OptionalRoleUser.ifPresent(roles::add);
-        if(user.isAdmin()){
-            Optional <Role> OptionalRoleAdmin= roleRepository.findByName("Role_ADMIN");
-            OptionalRoleAdmin.ifPresent(roles::add);
-        }
+       
         return roles;
     }
 
@@ -149,8 +144,6 @@ public class UserServiceImpl implements UserService {
 
         return((List <User>) this.repository.findByNameContainingNative(name)).stream().map(user->{
 
-            boolean admin= user.getRoles().stream().anyMatch(role-> "ROLE_ADMIN".equals(role.getName()));
-            user.setAdmin(admin);
             return user;
         
         }).collect(Collectors.toList());

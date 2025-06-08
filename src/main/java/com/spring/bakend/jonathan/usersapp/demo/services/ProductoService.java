@@ -24,6 +24,15 @@ public interface ProductoService {
     List<Producto> guardarProductos(List<Producto> productos); 
     List<Producto> listaDeProductosProvedor(Long id);
 
+    List<Producto> findByNameContainingNative(@Param("name") String name, @Param("idProveedor") Long idProveedor);
+
+    List<Producto> findByName(@Param("name") String name);
+
+    Optional<Producto> findByCodigoProducto(@Param("codigo") String codigo);
+
+    
+
+
 
 
 }

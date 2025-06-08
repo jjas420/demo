@@ -174,6 +174,14 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
+
+
+    @GetMapping("/hola")
+    @PreAuthorize("hasAnyRole('VENDEDOR')")
+
+    public String sayHello() {
+        return "Hola vendedor";
+    }
     
     private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
@@ -184,6 +192,7 @@ public class UserController {
         });
         return ResponseEntity.badRequest().body(errors);
     }
+
 
 
 

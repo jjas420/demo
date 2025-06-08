@@ -101,7 +101,16 @@ public class EntradaProductoImpl implements EntradaProductoService {
     @Transactional
     public EntradaProducto save(EntradaProducto entradaProducto, List<Producto> productos) {
 
-        EntradaProducto savedEntrada = entradaProductoRepository.save(entradaProducto);
+        double total = 0;
+
+        for (Producto producto : productos){
+                                total+=(producto.getStock()*producto.getPrecio());
+
+
+        }
+        entradaProducto.setTotalEngeneral(total);
+                EntradaProducto savedEntrada = entradaProductoRepository.save(entradaProducto);
+
 
         for (Producto producto : productos) {
             if (producto.getId() == null) {
@@ -116,15 +125,24 @@ public class EntradaProductoImpl implements EntradaProductoService {
                     entradaProductoProducto.setEntradaProducto(savedEntrada);
                     entradaProductoProducto.setProducto(producto);
                     entradaProductoProducto.setCantidad(producto.getStock());
+                    entradaProductoProducto.setTotalPorProducto(producto.getStock()*producto.getPrecio());
+                    
+                    entradaProductoProducto.setTotalEngeneral(total);
+                    
+                    
                     entradaProductoProductoRepository.save(entradaProductoProducto);
 
                 }
 
             } else {
+
                 EntradaProductoProducto entradaProductoProducto = new EntradaProductoProducto();
                 entradaProductoProducto.setEntradaProducto(savedEntrada);
                 entradaProductoProducto.setProducto(producto);
+                entradaProductoProducto.setResponsable(savedEntrada.getResponsable());
                 entradaProductoProducto.setCantidad(producto.getStock());
+                entradaProductoProducto.setTotalPorProducto(producto.getStock()*producto.getPrecio());
+                entradaProductoProducto.setTotalEngeneral(total);
 
                 Producto productoviejo = productosServiceImpl.findById(producto.getId())
                         .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -150,6 +168,19 @@ public class EntradaProductoImpl implements EntradaProductoService {
                 .orElseThrow(() -> new RuntimeException("Entrada no encontrada"));
         entrada.setFecha(entradaProducto.getFecha());
         entrada.setProveedor(entrada.getProveedor());
+        entrada.setResponsable(entradaProducto.getResponsable());
+
+          double total = 0;
+
+        for (Producto producto : productos){
+                                total+=(producto.getStock()*producto.getPrecio());
+
+
+        }
+        entrada.setTotalEngeneral(total);
+        String responsable=entradaProducto.getResponsable();
+        System.out.println(responsable);
+
 
         List<EntradaProductoProducto> productosOriginales = entrada.getProductos();
         List<EntradaProductoProducto> productosAEliminar = new ArrayList<>();
@@ -172,8 +203,10 @@ public class EntradaProductoImpl implements EntradaProductoService {
                 Long cantidadAnterior = entradaProductoProducto.getCantidad();
 
                 entradaProductoProducto.setCantidad(productoNuevo.getStock()); // Sumar la nueva cantidad
+                entradaProductoProducto.setResponsable(entradaProducto.getResponsable());
+                entradaProductoProducto.setTotalPorProducto(productoNuevo.getStock()*productoNuevo.getPrecio());
+                                                entradaProductoProducto.setTotalEngeneral(entrada.getTotalEngeneral());
 
-                // Guardamos la relación actualizada
                 entradaProductoProductoRepository.save(entradaProductoProducto);
 
                 // Actualizamos el stock del producto en la base de datos
@@ -188,6 +221,10 @@ public class EntradaProductoImpl implements EntradaProductoService {
                 nuevaRelacion.setEntradaProducto(entrada);
                 nuevaRelacion.setProducto(productoNuevo);
                 nuevaRelacion.setCantidad(productoNuevo.getStock());
+                nuevaRelacion.setTotalPorProducto(productoNuevo.getStock()*productoNuevo.getPrecio());
+                                nuevaRelacion.setTotalEngeneral(entrada.getTotalEngeneral());
+
+                
 
                 entradaProductoProductoRepository.save(nuevaRelacion);
 

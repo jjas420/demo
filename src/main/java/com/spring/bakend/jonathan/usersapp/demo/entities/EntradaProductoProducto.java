@@ -20,18 +20,45 @@ public class EntradaProductoProducto {
     @ManyToOne
     @JoinColumn(name = "entrada_producto_id")
     @JsonBackReference
-
     private EntradaProducto entradaProducto;
 
     
     @ManyToOne
     @JoinColumn(name = "producto_id")
     @JsonIgnoreProperties("productos") // Evita el bucle aquí
-
     private Producto producto;
 
+    private String responsable;
 
     private Long cantidad;
+
+     private  double totalPorProducto;
+    private double totalEngeneral;
+    
+    
+
+
+  
+
+
+    public double getTotalPorProducto() {
+        return totalPorProducto;
+    }
+
+
+    public void setTotalPorProducto(double totalPorProducto) {
+        this.totalPorProducto = totalPorProducto;
+    }
+
+
+    public double getTotalEngeneral() {
+        return totalEngeneral;
+    }
+
+
+    public void setTotalEngeneral(double totalEngeneral) {
+        this.totalEngeneral = totalEngeneral;
+    }
 
 
     public Long getId() {
@@ -71,6 +98,16 @@ public class EntradaProductoProducto {
 
     public void setCantidad(Long cantidad) {
         this.cantidad = cantidad;
+    }
+
+
+    public String getResponsable() {
+        return responsable;
+    }
+
+
+    public void setResponsable(String responsable) {
+        this.responsable = responsable;
     }
 
 

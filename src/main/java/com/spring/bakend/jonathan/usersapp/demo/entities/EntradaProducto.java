@@ -18,79 +18,84 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Table;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Temporal;
+
+
 
 @Entity
 public class EntradaProducto {
-
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-     @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proveedor_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "productos"}) 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "productos" })
     private Proveedor proveedor;
 
     @OneToMany(mappedBy = "entradaProducto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
-
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private List<EntradaProductoProducto> productos;
 
-
     private Date fecha;
+    
+    private String responsable;
+    private double totalEngeneral;
+    
+    
 
+   
 
+    public double getTotalEngeneral() {
+        return totalEngeneral;
+    }
 
+    public void setTotalEngeneral(double totalEngeneral) {
+        this.totalEngeneral = totalEngeneral;
+    }
 
     public Long getId() {
         return id;
     }
 
-
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public Proveedor getProveedor() {
         return proveedor;
     }
 
-
-
-
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
     }
-
 
     public List<EntradaProductoProducto> getProductos() {
         return productos;
     }
 
-
     public void setProductos(List<EntradaProductoProducto> productos) {
         this.productos = productos;
     }
-
 
     public Date getFecha() {
         return fecha;
     }
 
-
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
+    public String getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(String responsable) {
+        this.responsable = responsable;
+    }
 
    
 
-    
-
-
-
 }
-
-
