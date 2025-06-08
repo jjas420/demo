@@ -42,7 +42,7 @@ public class SalidadProductos {
         this.totalGeneral = totalGeneral;
     }
 
-    @OneToMany(mappedBy = "salida", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "salida", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ProductoSalidad> productos;
 
@@ -94,10 +94,7 @@ public class SalidadProductos {
         this.productos = productos;
     }
 
-    public Optional<SalidadProductos> findById(Long id2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
-    }
+  
 
 
 

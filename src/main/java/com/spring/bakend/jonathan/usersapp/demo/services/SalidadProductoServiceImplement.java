@@ -71,6 +71,18 @@ public class SalidadProductoServiceImplement implements SalidadProductoService {
                 productoService.update(producto, producto.getId());
             }
 
+            double total = 0;
+            List<ProductoSalidad> auxproductos = new ArrayList();
+            for (ProductoSalidad producto : salidadProductos.getProductos()) {
+                total += (producto.getCantidad() * producto.getProducto().getPrecio());
+                producto.setTotalPorPRoducto(producto.getCantidad() * producto.getProducto().getPrecio());
+
+                auxproductos.add(producto);
+
+            }
+            salidadProductos.setProductos(auxproductos);
+            salidadProductos.setTotalGeneral(total);
+
             salidadProductoRepository.save(salidadProductos);
 
         }
@@ -134,13 +146,26 @@ public class SalidadProductoServiceImplement implements SalidadProductoService {
 
         // Limpiar productos antiguos
         salidaExistente.getProductos().clear();
-
+        double total=0;
         // Agregar nuevos productos
         for (ProductoSalidad psNuevo : nuevaSalida.getProductos()) {
+            
+
             psNuevo.setSalida(salidaExistente); // Establecer la relación
             salidaExistente.getProductos().add(psNuevo);
         }
+
+        List<ProductoSalidad> auxproductos = new ArrayList();
+        for (ProductoSalidad producto : salidaExistente.getProductos()) {
+            total += (producto.getCantidad() * producto.getProducto().getPrecio());
+            producto.setTotalPorPRoducto(producto.getCantidad() * producto.getProducto().getPrecio());
+
+            auxproductos.add(producto);
+
+        }
+        salidaExistente.setProductos(auxproductos);
         // Guardar la salida actualizada
+
         salidadProductoRepository.save(salidaExistente);
     }
 
