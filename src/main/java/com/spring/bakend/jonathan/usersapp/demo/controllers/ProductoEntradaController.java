@@ -43,11 +43,7 @@ public class ProductoEntradaController {
         nuevaEntrada.setFecha(new Date()); // Fecha actual
         nuevaEntrada.setResponsable(entradaRequest.getObservacion());
         nuevaEntrada.setTotalEngeneral(entradaRequest.getTotalEngeneral());
-
         Producto producto = entradaRequest.getProductos().get(0);
-        
-        
-
         nuevaEntrada.setProveedor(producto.getProveedor()); // Puedes cambiarlo si lo necesitas
         // Guardamos la entrada con la lista de productos
         EntradaProductoService.save(nuevaEntrada, entradaRequest.getProductos());
