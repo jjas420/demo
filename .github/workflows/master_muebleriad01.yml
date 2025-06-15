@@ -27,8 +27,9 @@ jobs:
 
       - name: Setup Java Sdk ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v1
-        with: 
+        with: |+
           java-version: ${{ env.JAVA_VERSION }}
+
       - name: 'Restore Project Dependencies Using Mvn'
         shell: pwsh
         run: |+
@@ -39,9 +40,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AD0A2B5160C4435991990C753E8945BB }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F88026B9BF8F423E9090CF93BAAE74BD }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_615047DCC3514A06B451B8C3C20A57C5 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CAFD78BBF09144F694FB457E45875F2D }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AC8E7A3151BC40F0ADAAE2D46A6453C7 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7B40DE5B893D4C06A9D09F481D3704AC }}
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
