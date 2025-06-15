@@ -10,6 +10,11 @@
 		<relativePath /> <!-- lookup parent from repository -->
 
 
+
+
+
+		
+
 	</parent>
 	<groupId>com.spring.bakend.jonathan.usersapp</groupId>
 	<artifactId>demo</artifactId>
