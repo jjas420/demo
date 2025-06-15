@@ -10,13 +10,6 @@
 		<relativePath /> <!-- lookup parent from repository -->
 
 
-
-
-
-
-
-		
-
 	</parent>
 	<groupId>com.spring.bakend.jonathan.usersapp</groupId>
 	<artifactId>demo</artifactId>
@@ -37,7 +30,7 @@
 		<url />
 	</scm>
 	<properties>
-		<java.version>19</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -56,8 +49,8 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
