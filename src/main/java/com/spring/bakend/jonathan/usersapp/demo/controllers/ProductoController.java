@@ -31,9 +31,9 @@ import com.spring.bakend.jonathan.usersapp.demo.services.UserService;
 
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
 @RequestMapping("/api/productos")
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
 public class ProductoController {
     @Autowired
     private ProductoService service;
@@ -45,7 +45,7 @@ public class ProductoController {
     }
     
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
     public ResponseEntity<?> show(@PathVariable Long id) {
         Optional<Producto> ProductoOptional = service.findById(id);
         if (ProductoOptional.isPresent()) {
@@ -57,7 +57,7 @@ public class ProductoController {
     }
 
      @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
     public ResponseEntity<?> create(@Valid @RequestBody Producto producto, BindingResult result) {
         if (result.hasErrors()) {
             return validation(result);
@@ -87,7 +87,7 @@ public class ProductoController {
     }
     
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
     public ResponseEntity<?> update(@Valid @RequestBody Producto producto, BindingResult result, @PathVariable Long id) {
 
         if (result.hasErrors()) {
@@ -125,7 +125,7 @@ public class ProductoController {
        
     }
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
 
     public ResponseEntity<?> delete(@PathVariable Long id) {
         Optional<Producto> productoOptional = service.findById(id);
@@ -149,7 +149,8 @@ public class ProductoController {
     }
 
     @PostMapping("validarProducto")
-    @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
+
     public ResponseEntity<?> validar(@Valid @RequestBody Producto producto, BindingResult result) {
         if (result.hasErrors()) {
             return validation(result);
@@ -177,7 +178,8 @@ public class ProductoController {
         
     }
     @PostMapping("provedor")
-    @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
+
     public List<Producto> obtenerProductosPorProveedor(@RequestBody Map<String, Long> request) {
     Long proveedorId = request.get("proveedor_id");
     return service.listaDeProductosProvedor(proveedorId);

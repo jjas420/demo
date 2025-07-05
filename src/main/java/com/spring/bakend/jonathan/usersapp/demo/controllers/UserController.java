@@ -36,7 +36,6 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
-@CrossOrigin(origins={"http://localhost:4200"})
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -46,7 +45,6 @@ public class UserController {
     private UserService service;
   
     @GetMapping
-  @PreAuthorize("permitAll()")
     public List<User> list() {
         return service.findAll();
     }
@@ -61,14 +59,12 @@ public class UserController {
     
 
     @GetMapping("/page/{page}")
-    @PreAuthorize("permitAll()")
     public Page<User> listPageable(@PathVariable Integer page) {
         Pageable pageable = PageRequest.of(page, 4);
         return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> show(@PathVariable Long id) {
         Optional<User> userOptional = service.findById(id);
         if (userOptional.isPresent()) {
@@ -176,12 +172,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/hola")
-    @PreAuthorize("hasAnyRole('VENDEDOR')")
-
-    public String sayHello() {
-        return "Hola vendedor";
-    }
+   
     
     private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();

@@ -32,25 +32,29 @@ import jakarta.validation.Valid;
 
 @CrossOrigin(origins={"http://localhost:4200"})
 @RestController
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
 @RequestMapping("/api/proveedor")
 public class ProveedorController {
 
     @Autowired
     private ProveedorService service;
       @GetMapping
-      @PreAuthorize("permitAll()")
+          @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
+
     public List<Proveedor> list() {
         return service.findAll();
     }
 
     @GetMapping("/buscar/{name}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+        @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
+
       public List<Proveedor> buscarporNombre(@PathVariable String name) {
           return service.findByNameContainingNative(name);
       }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+        @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
+
     public ResponseEntity<?> show(@PathVariable Long id) {
         Optional<Proveedor> ProveedorOptional = service.findById(id);
         if (ProveedorOptional.isPresent()) {
@@ -61,7 +65,7 @@ public class ProveedorController {
                 .body(Collections.singletonMap("error", "el Proveedor no se encontro por el id:" + id ));
     }
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
 
     public ResponseEntity<?> create(@Valid @RequestBody Proveedor proveedor, BindingResult result) {
         if (result.hasErrors()) {
@@ -84,7 +88,7 @@ public class ProveedorController {
         
     }
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
     public ResponseEntity<?> update(@Valid @RequestBody Proveedor Proveedor, BindingResult result, @PathVariable Long id) {
 
         if (result.hasErrors()) {
@@ -118,7 +122,7 @@ public class ProveedorController {
 }
 
   @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('BODEGUERO', 'ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         Optional<Proveedor> userOptional = service.findById(id);
         if (userOptional.isPresent()) {
