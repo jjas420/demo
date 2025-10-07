@@ -58,12 +58,10 @@ export class AppComponent {
 
 }
 ## html del appComponent 
-
 <main class="main">
   <router-outlet />
   <!-- Componente que muestra los datos del usuario en una tarjeta visual -->
-  <app-tarjeta-usuario [usuario]="usuarioEjemplo"></app-tarjeta-usuario>
-  
+  <app-tarjeta-usuario [usuario]="usuarioEjemplo"></app-tarjeta-usuario>  
 </main>
 
 
