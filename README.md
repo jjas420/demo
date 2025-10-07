@@ -1,5 +1,6 @@
 # Sección 1: Angular
 1.	Crea un componente de Angular llamado TarjetaUsuario que reciba como @Input un objeto usuario con propiedades {nombre, email, edad} y lo muestre en un template.
+    
 •	Especifica la declaración del componente (@Component) y como definirías la propiedad @Input.
 # componente TarjetaUsuarioComponent
 import { Component, Input } from '@angular/core';
@@ -57,7 +58,8 @@ export class AppComponent {
   };
 
 }
-## html del appComponent 
+
+## html de  componente TarjetaUsuarioComponent
 <main class="main">
   <router-outlet />
   <!-- Componente que muestra los datos del usuario en una tarjeta visual -->
