@@ -60,11 +60,7 @@ export class AppComponent {
 }
 
 ## html de  componente TarjetaUsuarioComponent
-<main class="main">
-  <router-outlet />
+
   <!-- Componente que muestra los datos del usuario en una tarjeta visual -->
   <app-tarjeta-usuario [usuario]="usuarioEjemplo"></app-tarjeta-usuario>  
-</main>
 
-
-sdas
