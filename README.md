@@ -45,11 +45,11 @@ import { TarjetaUsuarioComponent } from "./Component/tarjeta-usuario/tarjeta-usu
 })
 export class AppComponent {
   title = 'prueba';
- /**
-   * Objeto de ejemplo que representa un usuario.
-   * Contiene las propiedades necesarias para ser mostrado
-   * en el componente TarjetaUsuario.
-   */
+
+  //Objeto de ejemplo que representa un usuario.
+  // Contiene las propiedades necesarias para ser mostrado
+  //en el componente TarjetaUsuario.
+   
   usuarioEjemplo = {
     nombre: 'Jonathan Ayona',
     email: 'jonathan@gmail.com',
@@ -63,8 +63,6 @@ export class AppComponent {
   <router-outlet />
   <!-- Componente que muestra los datos del usuario en una tarjeta visual -->
   <app-tarjeta-usuario [usuario]="usuarioEjemplo"></app-tarjeta-usuario>
-
-
   
 </main>
 
