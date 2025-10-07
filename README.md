@@ -47,9 +47,9 @@ import { TarjetaUsuarioComponent } from "./Component/tarjeta-usuario/tarjeta-usu
 export class AppComponent {
   title = 'prueba';
 
-  //Objeto de ejemplo que representa un usuario.
-  // Contiene las propiedades necesarias para ser mostrado
-  //en el componente TarjetaUsuario.
+//Objeto de ejemplo que representa un usuario y sera enviado al input.
+//Contiene las propiedades necesarias para ser mostrado
+// en el componente TarjetaUsuario.
    
   usuarioEjemplo = {
     nombre: 'Jonathan Ayona',
@@ -60,6 +60,6 @@ export class AppComponent {
 }
 
 ## html de  componente TarjetaUsuarioComponent
-<!--Muestra los datos del usuario recibidos por @Input-->
-  <app-tarjeta-usuario [usuario]="usuarioEjemplo"></app-tarjeta-usuario>  
+  <!-- Componente que muestra los datos del usuario en una tarjeta visual y tambien envia el usarioEjemplo -->
+  <app-tarjeta-usuario [usuario]="usuarioEjemplo"></app-tarjeta-usuario> 
 
