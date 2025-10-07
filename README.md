@@ -60,6 +60,6 @@ export class AppComponent {
 }
 
 ## html de  componente TarjetaUsuarioComponent
-  <!-- Componente que muestra los datos del usuario en una tarjeta visual y tambien envia el usarioEjemplo -->
+  //Componente que muestra los datos del usuario en una tarjeta visual y tambien envia el usarioEjemplo 
   <app-tarjeta-usuario [usuario]="usuarioEjemplo"></app-tarjeta-usuario> 
 
